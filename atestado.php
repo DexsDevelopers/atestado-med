@@ -1,24 +1,53 @@
 <?php
-$pageTitle = 'Atestado Médico — Verificamed';
+$pageTitle = 'Atestado Médico — VerificaMed';
 $submitted = false;
 $data = [];
 
+function gerarCodigoAtestado() {
+    $c = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $r = '';
+    for ($i = 0; $i < 18; $i++) $r .= $c[rand(0, strlen($c)-1)];
+    return $r;
+}
+function formatarDataPT($ymd) {
+    if (!$ymd) return '';
+    $m = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    [$y,$mo,$d] = explode('-', $ymd);
+    return (int)$d . ' de ' . $m[(int)$mo] . ' de ' . $y;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = [
+        'tratamento'     => trim($_POST['tratamento']     ?? 'Sr.'),
         'nomePaciente'   => trim($_POST['nomePaciente']   ?? ''),
-        'cpfPaciente'    => trim($_POST['cpfPaciente']    ?? ''),
-        'dataNascimento' => trim($_POST['dataNascimento'] ?? ''),
-        'nomeMedico'     => trim($_POST['nomeMedico']     ?? ''),
-        'crmMedico'      => trim($_POST['crmMedico']      ?? ''),
-        'especialidade'  => trim($_POST['especialidade']  ?? ''),
-        'diasAfastamento'=> trim($_POST['diasAfastamento']?? ''),
-        'dataEmissao'    => trim($_POST['dataEmissao']    ?? ''),
+        'unidade'        => trim($_POST['unidade']        ?? ''),
+        'enderecoUnidade'=> trim($_POST['enderecoUnidade']?? ''),
+        'dataAtend'      => trim($_POST['dataAtend']      ?? ''),
+        'quadroClinico'  => trim($_POST['quadroClinico']  ?? ''),
+        'tipoAfast'      => trim($_POST['tipoAfast']      ?? 'dia'),
+        'diasAfast'      => trim($_POST['diasAfast']      ?? '1'),
+        'dataAfastInicio'=> trim($_POST['dataAfastInicio']?? ''),
+        'recomendacoes'  => trim($_POST['recomendacoes']  ?? ''),
         'cid'            => trim($_POST['cid']            ?? ''),
+        'nomeMedico'     => trim($_POST['nomeMedico']     ?? ''),
+        'especialidade'  => trim($_POST['especialidade']  ?? ''),
+        'crmEstado'      => trim($_POST['crmEstado']      ?? ''),
+        'crmNumero'      => trim($_POST['crmNumero']      ?? ''),
+        'cns'            => trim($_POST['cns']            ?? ''),
+        'cidade'         => trim($_POST['cidade']         ?? ''),
         'observacoes'    => trim($_POST['observacoes']    ?? ''),
     ];
-    if ($data['nomePaciente'] && $data['nomeMedico'] && $data['crmMedico'] && $data['diasAfastamento']) {
+    if ($data['nomePaciente'] && $data['nomeMedico'] && $data['crmNumero'] && $data['dataAtend']) {
         $submitted = true;
-        $codigo = 'VM-' . date('Y') . '-' . str_pad(rand(1, 99999), 6, '0', STR_PAD_LEFT);
+        $codigo = gerarCodigoAtestado();
+        $dataFormatada = formatarDataPT($data['dataAtend']);
+        $dataAfastFmt  = $data['dataAfastInicio'] ? formatarDataPT($data['dataAfastInicio']) : $dataFormatada;
+        $cidadeData    = ($data['cidade'] ? $data['cidade'] . ', ' : '') . $dataFormatada;
+        if ($data['tipoAfast'] === 'dia') {
+            $textoAfast = 'exclusivamente no dia ' . $dataFormatada;
+        } else {
+            $textoAfast = 'pelo período de ' . $data['diasAfast'] . ' dia(s), a contar de ' . $dataAfastFmt;
+        }
     }
 }
 $today = date('Y-m-d');
@@ -26,195 +55,254 @@ $today = date('Y-m-d');
 <?php include 'includes/header.php'; ?>
 
 <?php if ($submitted): ?>
-<!-- SUCCESS STATE -->
-<div class="max-w-3xl mx-auto px-4 sm:px-6 py-16 text-center">
-  <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-    <svg class="w-8 h-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-    </svg>
-  </div>
-  <h2 class="text-2xl font-bold text-gray-900 mb-2">Atestado emitido com sucesso!</h2>
-  <p class="text-gray-500 mb-8">Código: <strong class="font-mono text-primary-700"><?= htmlspecialchars($codigo) ?></strong></p>
+<!-- DOCUMENT OUTPUT -->
+<style>
+@media print {
+  .no-print { display: none !important; }
+  .site-nav, .announce-bar, footer { display: none !important; }
+  body { background: #fff !important; }
+  #doc-print { box-shadow: none !important; border: none !important; margin: 0 !important; padding: 1.5cm 2cm !important; max-width: 100% !important; }
+}
+</style>
+<div style="max-width:820px;margin:2rem auto;padding:0 1.5rem 3rem;">
 
-  <!-- Document preview -->
-  <div class="doc-preview text-left mb-8" id="doc-print">
-    <div class="text-center border-b-2 border-gray-300 pb-5 mb-6">
-      <h2 class="text-2xl font-bold tracking-wide uppercase">ATESTADO MÉDICO</h2>
-      <p class="text-xs text-gray-500 mt-1">Documento com validade jurídica — Verificamed | Cód: <?= htmlspecialchars($codigo) ?></p>
-    </div>
-    <p class="mb-4">
-      Eu, <strong><?= htmlspecialchars($data['nomeMedico']) ?></strong>,
-      médico(a) inscrito(a) no CRM <strong><?= htmlspecialchars($data['crmMedico']) ?></strong><?= $data['especialidade'] ? ', especialidade ' . htmlspecialchars($data['especialidade']) : '' ?>,
-      atesto para os devidos fins que o(a) paciente
-    </p>
-    <div class="bg-gray-50 rounded-lg p-4 mb-4 grid grid-cols-2 gap-3 text-xs font-sans">
-      <div><span class="text-gray-500">Nome:</span> <strong><?= htmlspecialchars($data['nomePaciente']) ?></strong></div>
-      <div><span class="text-gray-500">CPF:</span> <strong><?= htmlspecialchars($data['cpfPaciente'] ?: '—') ?></strong></div>
-      <div><span class="text-gray-500">Nascimento:</span> <strong><?= htmlspecialchars($data['dataNascimento'] ?: '—') ?></strong></div>
-      <div><span class="text-gray-500">CID:</span> <strong><?= htmlspecialchars($data['cid'] ?: '—') ?></strong></div>
-    </div>
-    <p class="mb-4">
-      necessita de afastamento de suas atividades pelo período de
-      <strong><?= htmlspecialchars($data['diasAfastamento']) ?> dia(s)</strong>,
-      a contar da data de emissão deste documento.
-    </p>
-    <?php if ($data['observacoes']): ?>
-    <p class="mb-4 italic text-gray-600">Observações: <?= htmlspecialchars($data['observacoes']) ?></p>
-    <?php endif; ?>
-    <div class="border-t border-gray-200 mt-8 pt-5 text-center font-sans">
-      <div class="w-40 border-b border-gray-700 mx-auto mb-1"></div>
-      <p class="text-xs font-semibold"><?= htmlspecialchars($data['nomeMedico']) ?></p>
-      <p class="text-xs text-gray-500">CRM <?= htmlspecialchars($data['crmMedico']) ?></p>
-      <p class="text-xs text-gray-400 mt-3">Data de Emissão: <?= htmlspecialchars($data['dataEmissao']) ?></p>
-    </div>
-    <div class="flex justify-center mt-6">
-      <div class="w-16 h-16 bg-gray-100 border border-gray-300 rounded flex items-center justify-center text-xs text-gray-400 text-center">QR Code<br>verificação</div>
-    </div>
+  <div class="no-print" style="text-align:center;margin-bottom:1.5rem;">
+    <span style="display:inline-flex;align-items:center;gap:.5rem;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:.75rem;padding:.75rem 1.25rem;font-size:.875rem;font-weight:600;color:#15803d;">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      Atestado gerado! &nbsp;<span style="font-weight:400;color:#6b7280;">Código: <strong style="font-family:monospace;color:#2563eb;"><?= htmlspecialchars($codigo) ?></strong></span>
+    </span>
   </div>
 
-  <div class="flex flex-col sm:flex-row gap-3 justify-center no-print">
-    <button onclick="printDoc()" class="btn-primary">
-      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+  <!-- ====== THE DOCUMENT ====== -->
+  <div id="doc-print" style="background:#fff;border:1px solid #ccc;padding:2.5rem 3rem;font-family:'Times New Roman',Times,serif;font-size:11.5pt;line-height:1.65;color:#111;box-shadow:0 4px 24px rgba(0,0,0,.10);">
+
+    <!-- HEADER -->
+    <table style="width:100%;border-bottom:2px solid #444;padding-bottom:.6rem;margin-bottom:.8rem;">
+      <tr valign="top">
+        <td>
+          <div style="font-size:13.5pt;font-weight:800;text-transform:uppercase;letter-spacing:.4px;"><?= htmlspecialchars($data['unidade'] ?: 'Estabelecimento de Saúde') ?></div>
+          <?php if ($data['enderecoUnidade']): ?>
+          <div style="font-size:8.5pt;color:#555;margin-top:2px;"><?= htmlspecialchars($data['enderecoUnidade']) ?></div>
+          <?php endif; ?>
+        </td>
+        <td style="text-align:right;">
+          <div style="font-size:14pt;font-weight:700;font-style:italic;">Atestado</div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- BODY PARAGRAPHS -->
+    <p style="text-align:justify;margin:0 0 .9rem;">
+      Declaro, para os devidos fins, que o(a) <?= htmlspecialchars($data['tratamento']) ?>&nbsp;<strong><?= htmlspecialchars($data['nomePaciente']) ?></strong> foi atendido(a) nesta <?= htmlspecialchars($data['unidade'] ?: 'Unidade de Saúde') ?> no dia <strong><?= htmlspecialchars($dataFormatada) ?></strong>, apresentando quadro clínico compatível com <?= htmlspecialchars($data['quadroClinico'] ?: 'quadro clínico em avaliação') ?>.
+    </p>
+    <p style="text-align:justify;margin:0 0 .9rem;">
+      Após avaliação médica, constatou-se a necessidade de afastamento de suas atividades habituais <?= htmlspecialchars($textoAfast) ?>, sendo recomendado <?= htmlspecialchars($data['recomendacoes'] ?: 'repouso e acompanhamento médico') ?>.
+    </p>
+    <p style="text-align:justify;margin:0 0 2rem;">
+      Firmo o presente atestado para os devidos fins.
+    </p>
+
+    <!-- BOTTOM SECTION -->
+    <table style="width:100%;margin-top:1rem;">
+      <tr valign="bottom">
+        <td style="width:48%;font-size:9.5pt;line-height:1.8;">
+          <?php if ($data['observacoes']): ?>
+          <div><em>Observações:</em><br><?= nl2br(htmlspecialchars($data['observacoes'])) ?></div>
+          <?php endif; ?>
+          <?php if ($data['cid']): ?>
+          <div>CID: <?= htmlspecialchars($data['cid']) ?></div>
+          <?php endif; ?>
+          <div style="margin-top:.4rem;">
+            <?= htmlspecialchars($cidadeData) ?><br>
+            Código: <span style="font-family:Courier,monospace;font-size:8.5pt;"><?= htmlspecialchars($codigo) ?></span>
+          </div>
+        </td>
+        <td style="width:4%;"></td>
+        <td style="width:48%;text-align:center;">
+          <div style="border-top:1.5px solid #222;padding-top:.4rem;margin-top:3rem;">
+            <div style="font-weight:700;font-size:10.5pt;"><?= htmlspecialchars($data['nomeMedico']) ?></div>
+            <?php if ($data['especialidade']): ?>
+            <div style="font-size:9pt;"><?= htmlspecialchars($data['especialidade']) ?></div>
+            <?php endif; ?>
+            <div style="font-size:9pt;">CRM <?= htmlspecialchars($data['crmEstado']) ?> <?= htmlspecialchars($data['crmNumero']) ?></div>
+            <?php if ($data['cns']): ?>
+            <div style="font-size:8.5pt;color:#444;">CNS: <?= htmlspecialchars($data['cns']) ?></div>
+            <?php endif; ?>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- FOOTER STRIP -->
+    <div style="margin-top:2rem;border-top:1px solid #bbb;padding-top:.35rem;font-size:8pt;color:#777;display:flex;justify-content:space-between;">
+      <span>VerificaMed — Sistema Nacional de Verificação</span>
+      <span>verificamed.website</span>
+      <span>Lei 14.063/2020</span>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="no-print" style="display:flex;gap:.75rem;justify-content:center;margin-top:1.5rem;flex-wrap:wrap;">
+    <button onclick="window.print()" style="display:inline-flex;align-items:center;gap:.5rem;background:#2563eb;color:#fff;font-weight:600;padding:.75rem 1.75rem;border-radius:.625rem;border:none;cursor:pointer;font-size:.9rem;">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
       Imprimir / Salvar PDF
     </button>
-    <a href="/atestado.php" class="btn-gray">Novo Atestado</a>
+    <a href="/atestado.php" style="display:inline-flex;align-items:center;gap:.5rem;background:#f3f4f6;color:#374151;font-weight:600;padding:.75rem 1.75rem;border-radius:.625rem;text-decoration:none;font-size:.9rem;">Novo Atestado</a>
   </div>
 </div>
 
 <?php else: ?>
 <!-- FORM -->
-<div class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-  <div class="mb-8">
-    <div class="flex items-center gap-3 mb-2">
-      <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-        <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-        </svg>
-      </div>
-      <h1 class="text-2xl font-bold text-gray-900">Atestado Médico</h1>
-    </div>
-    <p class="text-gray-500">Preencha os dados abaixo para gerar o atestado médico digital.</p>
+<section class="hero-section" style="padding:2.5rem 1.5rem;">
+  <div style="position:relative;z-index:1;">
+    <h1 class="hero-h1" style="font-size:1.75rem;">Gerar Atestado Médico</h1>
+    <p class="hero-sub" style="margin-bottom:0;">Preencha os campos abaixo para emitir um atestado no formato UPA/clínica.</p>
   </div>
+</section>
 
-  <div class="flex gap-2 mb-6">
-    <button id="tab-form"    onclick="switchTab('form','atestado-form','atestado-preview','bg-primary-600 text-white')"
-      class="px-5 py-2 rounded-lg text-sm font-semibold bg-primary-600 text-white">Formulário</button>
-    <button id="tab-preview" onclick="switchTab('preview','atestado-form','atestado-preview','bg-primary-600 text-white')"
-      class="px-5 py-2 rounded-lg text-sm font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200">Pré-visualização</button>
-  </div>
+<div style="max-width:820px;margin:0 auto;padding:2rem 1.5rem 3rem;">
+  <form method="POST" action="/atestado.php" style="display:flex;flex-direction:column;gap:1.5rem;">
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-    <!-- Left: Form -->
-    <form method="POST" action="/atestado.php" id="atestado-form" class="flex flex-col gap-5">
-
-      <div class="bg-white border border-gray-200 rounded-2xl p-6">
-        <h3 class="font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">Dados do Paciente</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-gray-700">Nome completo <span class="text-red-500">*</span></label>
-            <input id="nomePaciente" name="nomePaciente" class="input-field" placeholder="Nome do paciente" required>
-          </div>
-          <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-gray-700">CPF</label>
-            <input id="cpfPaciente" name="cpfPaciente" class="input-field" placeholder="000.000.000-00">
-          </div>
-          <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-gray-700">Data de nascimento</label>
-            <input id="dataNascimento" name="dataNascimento" type="date" class="input-field">
-          </div>
-          <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-gray-700">CID (opcional)</label>
-            <input id="cid" name="cid" class="input-field" placeholder="ex: Z76.0">
-          </div>
+    <!-- UNIDADE -->
+    <div style="background:#fff;border:1px solid #e8edf5;border-radius:1rem;padding:1.5rem;box-shadow:0 2px 10px rgba(37,99,235,.05);">
+      <h3 style="font-size:.9375rem;font-weight:700;color:#111827;margin:0 0 1rem;padding-bottom:.5rem;border-bottom:1px solid #f0f0f0;">🏥 Unidade / Estabelecimento</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div style="display:flex;flex-direction:column;gap:.3rem;grid-column:span 2;">
+          <label style="font-size:.8125rem;font-weight:600;color:#374151;">Nome da unidade <span style="color:#ef4444;">*</span></label>
+          <input name="unidade" class="input-field" placeholder="ex: Unidade de Pronto Atendimento (UPA 24h)" required value="<?= htmlspecialchars($_POST['unidade'] ?? '') ?>">
         </div>
-      </div>
-
-      <div class="bg-white border border-gray-200 rounded-2xl p-6">
-        <h3 class="font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">Dados do Médico</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-gray-700">Nome do médico <span class="text-red-500">*</span></label>
-            <input id="nomeMedico" name="nomeMedico" class="input-field" placeholder="Dr(a). Nome" required>
-          </div>
-          <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-gray-700">CRM <span class="text-red-500">*</span></label>
-            <input id="crmMedico" name="crmMedico" class="input-field" placeholder="CRM/UF 000000" required>
-          </div>
-          <div class="flex flex-col gap-1 sm:col-span-2">
-            <label class="text-sm font-medium text-gray-700">Especialidade</label>
-            <input id="especialidade" name="especialidade" class="input-field" placeholder="ex: Clínico Geral">
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white border border-gray-200 rounded-2xl p-6">
-        <h3 class="font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">Dados do Atestado</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-gray-700">Dias de afastamento <span class="text-red-500">*</span></label>
-            <input id="diasAfastamento" name="diasAfastamento" type="number" min="1" class="input-field" placeholder="ex: 3" required>
-          </div>
-          <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-gray-700">Data de emissão <span class="text-red-500">*</span></label>
-            <input id="dataEmissao" name="dataEmissao" type="date" class="input-field" value="<?= $today ?>" required>
-          </div>
-          <div class="flex flex-col gap-1 sm:col-span-2">
-            <label class="text-sm font-medium text-gray-700">Observações</label>
-            <textarea id="observacoes" name="observacoes" rows="3" class="input-field resize-none" placeholder="Informações adicionais (opcional)"></textarea>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
-        <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-        <p>Este documento possui validade jurídica conforme a Lei 14.063/2020. Certifique-se de que todas as informações estão corretas.</p>
-      </div>
-
-      <button type="submit" class="btn-primary w-full py-3.5 text-base">
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-        Gerar Atestado
-      </button>
-    </form>
-
-    <!-- Right: Live Preview -->
-    <div id="atestado-preview" class="hidden lg:block">
-      <p class="text-xs text-gray-400 mb-3 font-medium uppercase tracking-wider">Pré-visualização do documento</p>
-      <div class="doc-preview">
-        <div class="text-center border-b-2 border-gray-300 pb-5 mb-6">
-          <h2 class="text-2xl font-bold tracking-wide uppercase">ATESTADO MÉDICO</h2>
-          <p class="text-xs text-gray-500 mt-1">Documento com validade jurídica — Verificamed</p>
-        </div>
-        <p class="mb-4">
-          Eu, <strong><span id="prev-nomeMedico">________________________</span></strong>,
-          médico(a) inscrito(a) no CRM <strong><span id="prev-crmMedico">______</span></strong><span id="prev-especialidade">,</span>
-          atesto para os devidos fins que o(a) paciente
-        </p>
-        <div class="bg-gray-50 rounded-lg p-4 mb-4 grid grid-cols-2 gap-3 text-xs font-sans">
-          <div><span class="text-gray-500">Nome:</span> <strong><span id="prev-nomePaciente">—</span></strong></div>
-          <div><span class="text-gray-500">CPF:</span> <strong><span id="prev-cpfPaciente">—</span></strong></div>
-          <div><span class="text-gray-500">Nascimento:</span> <strong><span id="prev-dataNascimento">—</span></strong></div>
-          <div><span class="text-gray-500">CID:</span> <strong><span id="prev-cid">—</span></strong></div>
-        </div>
-        <p class="mb-4">
-          necessita de afastamento de suas atividades pelo período de
-          <strong><span id="prev-dias">___ dia(s)</span></strong>, a contar da data de emissão.
-        </p>
-        <p id="prev-observacoes-wrap" class="mb-4 italic text-gray-600 hidden">Observações: <span id="prev-observacoes"></span></p>
-        <div class="border-t border-gray-200 mt-8 pt-5 text-center font-sans">
-          <div class="w-40 border-b border-gray-700 mx-auto mb-1"></div>
-          <p class="text-xs font-semibold"><span id="prev-nomeMedico2">Nome do Médico</span></p>
-          <p class="text-xs text-gray-500">CRM <span id="prev-crmMedico2">——</span></p>
-          <p class="text-xs text-gray-400 mt-3">Data: <span id="prev-dataEmissao"><?= $today ?></span></p>
-        </div>
-        <div class="flex justify-center mt-6">
-          <div class="w-16 h-16 bg-gray-100 border border-gray-300 rounded flex items-center justify-center text-xs text-gray-400 text-center">QR Code<br>verificação</div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;grid-column:span 2;">
+          <label style="font-size:.8125rem;font-weight:600;color:#374151;">Endereço da unidade</label>
+          <input name="enderecoUnidade" class="input-field" placeholder="ex: Av. Principal, 100 - Bairro - Cidade/UF" value="<?= htmlspecialchars($_POST['enderecoUnidade'] ?? '') ?>">
         </div>
       </div>
     </div>
 
-  </div>
+    <!-- PACIENTE -->
+    <div style="background:#fff;border:1px solid #e8edf5;border-radius:1rem;padding:1.5rem;box-shadow:0 2px 10px rgba(37,99,235,.05);">
+      <h3 style="font-size:.9375rem;font-weight:700;color:#111827;margin:0 0 1rem;padding-bottom:.5rem;border-bottom:1px solid #f0f0f0;">👤 Paciente</h3>
+      <div style="display:grid;grid-template-columns:100px 1fr;gap:1rem;">
+        <div style="display:flex;flex-direction:column;gap:.3rem;">
+          <label style="font-size:.8125rem;font-weight:600;color:#374151;">Tratamento</label>
+          <select name="tratamento" class="input-field">
+            <option value="Sr.">Sr.</option>
+            <option value="Sra.">Sra.</option>
+            <option value="Dr.">Dr.</option>
+            <option value="Dra.">Dra.</option>
+          </select>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;">
+          <label style="font-size:.8125rem;font-weight:600;color:#374151;">Nome completo <span style="color:#ef4444;">*</span></label>
+          <input name="nomePaciente" class="input-field" placeholder="Nome completo do paciente" required value="<?= htmlspecialchars($_POST['nomePaciente'] ?? '') ?>">
+        </div>
+      </div>
+    </div>
+
+    <!-- ATENDIMENTO -->
+    <div style="background:#fff;border:1px solid #e8edf5;border-radius:1rem;padding:1.5rem;box-shadow:0 2px 10px rgba(37,99,235,.05);">
+      <h3 style="font-size:.9375rem;font-weight:700;color:#111827;margin:0 0 1rem;padding-bottom:.5rem;border-bottom:1px solid #f0f0f0;">📋 Atendimento</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div style="display:flex;flex-direction:column;gap:.3rem;">
+          <label style="font-size:.8125rem;font-weight:600;color:#374151;">Data do atendimento <span style="color:#ef4444;">*</span></label>
+          <input name="dataAtend" type="date" class="input-field" value="<?= htmlspecialchars($_POST['dataAtend'] ?? $today) ?>" required>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;">
+          <label style="font-size:.8125rem;font-weight:600;color:#374151;">CID</label>
+          <input name="cid" class="input-field" placeholder="ex: J11" value="<?= htmlspecialchars($_POST['cid'] ?? '') ?>">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;grid-column:span 2;">
+          <label style="font-size:.8125rem;font-weight:600;color:#374151;">Quadro clínico / sintomas <span style="color:#ef4444;">*</span></label>
+          <textarea name="quadroClinico" class="input-field" rows="2" placeholder="ex: síndrome gripal, acompanhada de febre, cefaleia, dores no corpo e mal-estar geral" style="resize:vertical;" required><?= htmlspecialchars($_POST['quadroClinico'] ?? '') ?></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- AFASTAMENTO -->
+    <div style="background:#fff;border:1px solid #e8edf5;border-radius:1rem;padding:1.5rem;box-shadow:0 2px 10px rgba(37,99,235,.05);">
+      <h3 style="font-size:.9375rem;font-weight:700;color:#111827;margin:0 0 1rem;padding-bottom:.5rem;border-bottom:1px solid #f0f0f0;">📅 Afastamento</h3>
+      <div style="display:flex;gap:1rem;margin-bottom:1rem;">
+        <label style="display:flex;align-items:center;gap:.4rem;font-size:.875rem;cursor:pointer;">
+          <input type="radio" name="tipoAfast" value="dia" checked onchange="toggleAfast(this.value)"> Só no dia do atendimento
+        </label>
+        <label style="display:flex;align-items:center;gap:.4rem;font-size:.875rem;cursor:pointer;">
+          <input type="radio" name="tipoAfast" value="periodo" onchange="toggleAfast(this.value)"> Por período (dias)
+        </label>
+      </div>
+      <div id="afast-periodo" style="display:none;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div style="display:flex;flex-direction:column;gap:.3rem;">
+          <label style="font-size:.8125rem;font-weight:600;color:#374151;">Nº de dias</label>
+          <input name="diasAfast" type="number" min="1" class="input-field" placeholder="ex: 3" value="<?= htmlspecialchars($_POST['diasAfast'] ?? '') ?>">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;">
+          <label style="font-size:.8125rem;font-weight:600;color:#374151;">A partir de</label>
+          <input name="dataAfastInicio" type="date" class="input-field" value="<?= htmlspecialchars($_POST['dataAfastInicio'] ?? $today) ?>">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem;">
+        <div style="display:flex;flex-direction:column;gap:.3rem;grid-column:span 2;">
+          <label style="font-size:.8125rem;font-weight:600;color:#374151;">Recomendações <span style="color:#ef4444;">*</span></label>
+          <textarea name="recomendacoes" class="input-field" rows="2" placeholder="ex: repouso, hidratação e acompanhamento dos sintomas para adequada recuperação do quadro clínico" style="resize:vertical;" required><?= htmlspecialchars($_POST['recomendacoes'] ?? '') ?></textarea>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;">
+          <label style="font-size:.8125rem;font-weight:600;color:#374151;">Observações</label>
+          <input name="observacoes" class="input-field" placeholder="Observações (opcional)" value="<?= htmlspecialchars($_POST['observacoes'] ?? '') ?>">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;">
+          <label style="font-size:.8125rem;font-weight:600;color:#374151;">Cidade</label>
+          <input name="cidade" class="input-field" placeholder="ex: Teresina" value="<?= htmlspecialchars($_POST['cidade'] ?? '') ?>">
+        </div>
+      </div>
+    </div>
+
+    <!-- MÉDICO -->
+    <div style="background:#fff;border:1px solid #e8edf5;border-radius:1rem;padding:1.5rem;box-shadow:0 2px 10px rgba(37,99,235,.05);">
+      <h3 style="font-size:.9375rem;font-weight:700;color:#111827;margin:0 0 1rem;padding-bottom:.5rem;border-bottom:1px solid #f0f0f0;">👨‍⚕️ Médico Responsável</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div style="display:flex;flex-direction:column;gap:.3rem;grid-column:span 2;">
+          <label style="font-size:.8125rem;font-weight:600;color:#374151;">Nome completo <span style="color:#ef4444;">*</span></label>
+          <input name="nomeMedico" class="input-field" placeholder="ex: Alenobre de Moura Filho" required value="<?= htmlspecialchars($_POST['nomeMedico'] ?? '') ?>">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;">
+          <label style="font-size:.8125rem;font-weight:600;color:#374151;">Especialidade</label>
+          <input name="especialidade" class="input-field" placeholder="ex: Médico Clínico Geral" value="<?= htmlspecialchars($_POST['especialidade'] ?? '') ?>">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;">
+          <label style="font-size:.8125rem;font-weight:600;color:#374151;">CRM — Estado</label>
+          <select name="crmEstado" class="input-field">
+            <?php foreach (['AC','AL','AM','AP','BA','CE','DF','ES','GO','MA','MG','MS','MT','PA','PB','PE','PI','PR','RJ','RN','RO','RR','RS','SC','SE','SP','TO'] as $uf): ?>
+            <option value="<?= $uf ?>" <?= (($_POST['crmEstado'] ?? 'PI') === $uf) ? 'selected' : '' ?>><?= $uf ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;">
+          <label style="font-size:.8125rem;font-weight:600;color:#374151;">Nº CRM <span style="color:#ef4444;">*</span></label>
+          <input name="crmNumero" class="input-field" placeholder="ex: 14927" required value="<?= htmlspecialchars($_POST['crmNumero'] ?? '') ?>">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;">
+          <label style="font-size:.8125rem;font-weight:600;color:#374151;">CNS (opcional)</label>
+          <input name="cns" class="input-field" placeholder="ex: 702201232038714" value="<?= htmlspecialchars($_POST['cns'] ?? '') ?>">
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:.75rem;padding:1rem 1.25rem;display:flex;gap:.75rem;align-items:flex-start;font-size:.8125rem;color:#92400e;">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+      <span>Certifique-se de que todas as informações estão corretas antes de gerar o atestado. O documento possui validade jurídica.</span>
+    </div>
+
+    <button type="submit" style="display:inline-flex;align-items:center;justify-content:center;gap:.5rem;background:#2563eb;color:#fff;font-weight:700;padding:1rem;border-radius:.75rem;border:none;cursor:pointer;font-size:1rem;transition:background .15s;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Gerar Atestado
+    </button>
+  </form>
 </div>
+
+<script>
+function toggleAfast(v) {
+  var el = document.getElementById('afast-periodo');
+  el.style.display = v === 'periodo' ? 'grid' : 'none';
+}
+</script>
 <?php endif; ?>
 
 <?php include 'includes/footer.php'; ?>

@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Verificar Documento — Verificamed';
+$pageTitle = 'Verificar Documento — VerificaMed';
 
 $mockDocs = [
     'VM-2024-001234' => [
@@ -32,33 +32,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <?php include 'includes/header.php'; ?>
 
-<div class="max-w-3xl mx-auto px-4 sm:px-6 py-10">
-
-  <!-- Header -->
-  <div class="mb-8 text-center">
-    <div class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-      <svg class="w-7 h-7 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-      </svg>
-    </div>
-    <h1 class="text-3xl font-bold text-gray-900 mb-2">Verificar Documento</h1>
-    <p class="text-gray-500 max-w-md mx-auto">
-      Insira o código do documento para verificar sua autenticidade em tempo real.
-    </p>
+<section class="hero-section" style="padding:3rem 1.5rem;">
+  <div style="position:relative;z-index:1;">
+    <h1 class="hero-h1" style="font-size:2rem;">Verificar Documento</h1>
+    <p class="hero-sub">Insira o código do documento ou escaneie o QR Code para confirmar a autenticidade em tempo real.</p>
   </div>
+</section>
 
-  <!-- Search form -->
-  <div class="bg-white border border-gray-200 rounded-2xl p-8 card-shadow mb-8">
-    <form method="POST" action="/verificar.php" class="flex flex-col sm:flex-row gap-3">
+<section class="section-gray" style="padding:3rem 0;">
+<div style="max-width:640px;margin:0 auto;padding:0 1.5rem;">
+
+  <div class="verify-card" style="margin-bottom:1.5rem;">
+    <p style="font-size:.9375rem;font-weight:600;color:#111827;margin-bottom:1rem;">Digite o código de verificação</p>
+    <form method="POST" action="/verificar.php" style="display:flex;gap:.75rem;flex-wrap:wrap;">
       <input
         type="text"
         name="codigo"
         value="<?= htmlspecialchars($codigo) ?>"
         placeholder="Ex: VM-2024-001234"
-        class="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 font-mono focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition placeholder-gray-400"
+        class="input-field"
+        style="flex:1;min-width:200px;font-family:monospace;"
         required
       />
-      <button type="submit" class="btn-purple">
+      <button type="submit" style="display:inline-flex;align-items:center;gap:.5rem;background:#2563eb;color:#fff;font-weight:600;padding:.75rem 1.5rem;border-radius:.625rem;border:none;cursor:pointer;font-size:.9rem;transition:background .15s;white-space:nowrap;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
         </svg>
@@ -71,9 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </p>
   </div>
 
-  <!-- Result: Found -->
   <?php if ($searched && $resultado): ?>
-  <div class="bg-white border-2 border-emerald-200 rounded-2xl p-8 card-shadow mb-8">
+  <div class="result-success" style="margin-top:1.5rem;">
     <div class="flex items-center gap-3 mb-6">
       <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
         <svg class="w-6 h-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -128,9 +123,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
   </div>
 
-  <!-- Result: Not found -->
   <?php elseif ($searched && !$resultado): ?>
-  <div class="bg-white border-2 border-red-200 rounded-2xl p-8 card-shadow mb-8">
+  <div class="result-error" style="margin-top:1.5rem;">
     <div class="flex items-center gap-3 mb-4">
       <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
         <svg class="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -152,32 +146,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
   <?php endif; ?>
 
-  <!-- Info cards -->
-  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <?php
-    $cards = [
-      ['color'=>'text-purple-600 bg-purple-50','title'=>'Verificação Instantânea','desc'=>'Resultado em menos de 2 segundos',
-       'path'=>'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z'],
-      ['color'=>'text-emerald-600 bg-emerald-50','title'=>'Dados Criptografados','desc'=>'Comunicação 100% segura via TLS',
-       'path'=>'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z'],
-      ['color'=>'text-blue-600 bg-blue-50','title'=>'Base Centralizada','desc'=>'Todos os documentos Verificamed',
-       'path'=>'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
-    ];
-    foreach ($cards as $c): ?>
-    <div class="bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-3">
-      <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 <?= $c['color'] ?>">
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="<?= $c['path'] ?>"/>
-        </svg>
-      </div>
-      <div>
-        <p class="text-sm font-semibold text-gray-900"><?= $c['title'] ?></p>
-        <p class="text-xs text-gray-400"><?= $c['desc'] ?></p>
-      </div>
-    </div>
-    <?php endforeach; ?>
-  </div>
-
 </div>
+</section>
+
+<section class="cta-section">
+  <h2 class="cta-h2">Verifique agora a autenticidade</h2>
+  <p class="cta-sub">Basta escanear o QR Code do documento ou digitar o código de verificação para confirmar sua autenticidade instantaneamente.</p>
+  <a href="/verificar.php" class="btn-verify">
+    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Verificar Documento
+  </a>
+</section>
 
 <?php include 'includes/footer.php'; ?>

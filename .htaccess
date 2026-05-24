@@ -1,0 +1,11 @@
+Options -MultiViews
+RewriteEngine On
+
+# Clean URLs: /atestado → /atestado.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+# Default page
+DirectoryIndex index.php

@@ -10,7 +10,7 @@
     </div>
     <h1 class="hero-h1">Verificação de Documentos<br>Médicos em Tempo Real</h1>
     <p class="hero-sub">Sistema utilizado por hospitais, UPAs, prontos-socorros e clínicas em todo o Brasil para validar atestados e receitas médicas com total segurança.</p>
-    <a href="/verificar.php" class="btn-verify">
+    <a href="verificar.php" class="btn-verify">
       <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       Verificar Documento
       <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
@@ -116,7 +116,7 @@
 <section class="cta-section">
   <h2 class="cta-h2">Verifique agora a autenticidade</h2>
   <p class="cta-sub">Basta escanear o QR Code do documento ou digitar o código de verificação para confirmar sua autenticidade instantaneamente.</p>
-  <a href="/verificar.php" class="btn-verify">
+  <a href="verificar.php" class="btn-verify">
     <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
     Verificar Documento
   </a>

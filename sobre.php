@@ -40,7 +40,7 @@
 <section class="cta-section">
   <h2 class="cta-h2">Verifique um documento agora</h2>
   <p class="cta-sub">Acesse nossa ferramenta de verificação e confirme a autenticidade de qualquer documento médico.</p>
-  <a href="/verificar.php" class="btn-verify">
+  <a href="verificar.php" class="btn-verify">
     <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
     Verificar Documento
   </a>

@@ -9,8 +9,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
 </head>
+<?php
+$_base = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), '/');
+?>
 <body style="margin:0;background:#fff;color:#111827;font-family:'Inter',system-ui,sans-serif;display:flex;flex-direction:column;min-height:100vh;">
 
 <!-- ANNOUNCEMENT BAR -->
@@ -21,7 +24,7 @@
 <!-- NAVBAR -->
 <nav class="site-nav no-print" style="position:sticky;top:0;z-index:50;">
   <div class="nav-inner">
-    <a href="/index.php" class="nav-brand">
+    <a href="index.php" class="nav-brand">
       VerificaMed
       <span class="nav-brand-sep">|</span>
       <span class="nav-brand-sub">Sistema Nacional de Verificação</span>
@@ -30,9 +33,9 @@
     <div class="nav-links" id="nav-links">
       <?php
       $links = [
-        ['href'=>'/index.php',        'page'=>'index',        'label'=>'Início'],
-        ['href'=>'/sobre.php',         'page'=>'sobre',        'label'=>'Sobre'],
-        ['href'=>'/instituicoes.php',  'page'=>'instituicoes', 'label'=>'Instituições'],
+        ['href'=>'index.php',        'page'=>'index',        'label'=>'Início'],
+        ['href'=>'sobre.php',          'page'=>'sobre',        'label'=>'Sobre'],
+        ['href'=>'instituicoes.php',   'page'=>'instituicoes', 'label'=>'Instituições'],
       ];
       foreach ($links as $l): ?>
         <a href="<?= $l['href'] ?>" class="nav-link <?= $currentPage === $l['page'] ? 'active' : '' ?>">

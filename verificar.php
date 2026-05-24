@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <div class="verify-card" style="margin-bottom:1.5rem;">
     <p style="font-size:.9375rem;font-weight:600;color:#111827;margin-bottom:1rem;">Digite o código de verificação</p>
-    <form method="POST" action="/verificar.php" style="display:flex;gap:.75rem;flex-wrap:wrap;">
+    <form method="POST" action="verificar.php" style="display:flex;gap:.75rem;flex-wrap:wrap;">
       <input
         type="text"
         name="codigo"
@@ -152,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <section class="cta-section">
   <h2 class="cta-h2">Verifique agora a autenticidade</h2>
   <p class="cta-sub">Basta escanear o QR Code do documento ou digitar o código de verificação para confirmar sua autenticidade instantaneamente.</p>
-  <a href="/verificar.php" class="btn-verify">
+  <a href="verificar.php" class="btn-verify">
     <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
     Verificar Documento
   </a>

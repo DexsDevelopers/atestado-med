@@ -147,7 +147,7 @@ $today = date('Y-m-d');
       <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
       Imprimir / Salvar PDF
     </button>
-    <a href="/atestado.php" style="display:inline-flex;align-items:center;gap:.5rem;background:#f3f4f6;color:#374151;font-weight:600;padding:.75rem 1.75rem;border-radius:.625rem;text-decoration:none;font-size:.9rem;">Novo Atestado</a>
+    <a href="atestado.php" style="display:inline-flex;align-items:center;gap:.5rem;background:#f3f4f6;color:#374151;font-weight:600;padding:.75rem 1.75rem;border-radius:.625rem;text-decoration:none;font-size:.9rem;">Novo Atestado</a>
   </div>
 </div>
 
@@ -161,7 +161,7 @@ $today = date('Y-m-d');
 </section>
 
 <div style="max-width:820px;margin:0 auto;padding:2rem 1.5rem 3rem;">
-  <form method="POST" action="/atestado.php" style="display:flex;flex-direction:column;gap:1.5rem;">
+  <form method="POST" action="atestado.php" style="display:flex;flex-direction:column;gap:1.5rem;">
 
     <!-- UNIDADE -->
     <div style="background:#fff;border:1px solid #e8edf5;border-radius:1rem;padding:1.5rem;box-shadow:0 2px 10px rgba(37,99,235,.05);">

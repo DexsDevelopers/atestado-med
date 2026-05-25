@@ -44,10 +44,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <div class="verify-card" style="margin-bottom:1.5rem;">
     <p style="font-size:.9375rem;font-weight:600;color:#111827;margin-bottom:1rem;">Digite o código de verificação</p>
-    <form method="POST" action="verificar.php" style="display:flex;gap:.75rem;flex-wrap:wrap;">
+    <form method="POST" action="verificar.php" id="verify-form" style="display:flex;gap:.75rem;flex-wrap:wrap;">
       <input
         type="text"
         name="codigo"
+        id="codigo-input"
         value="<?= htmlspecialchars($codigo) ?>"
         placeholder="Ex: VM-2024-001234"
         class="input-field"
@@ -55,16 +56,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         required
       />
       <button type="submit" style="display:inline-flex;align-items:center;gap:.5rem;background:#2563eb;color:#fff;font-weight:600;padding:.75rem 1.5rem;border-radius:.625rem;border:none;cursor:pointer;font-size:.9rem;transition:background .15s;white-space:nowrap;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
+        <svg fill="none" width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         Verificar
       </button>
     </form>
-    <p class="text-xs text-gray-400 mt-3 text-center">
-      Teste com: <span class="font-mono font-semibold text-gray-600">VM-2024-001234</span>
-      ou <span class="font-mono font-semibold text-gray-600">VM-2024-005678</span>
-    </p>
+
+    <!-- QR SCANNER BUTTON -->
+    <div style="text-align:center;margin-top:1.25rem;">
+      <button type="button" id="btn-scan" onclick="toggleScanner()"
+        style="display:inline-flex;align-items:center;gap:.5rem;background:#f0f4ff;color:#2563eb;font-weight:600;font-size:.875rem;padding:.625rem 1.25rem;border-radius:.625rem;border:1.5px solid #c7d7fd;cursor:pointer;transition:background .15s;"
+        onmouseover="this.style.background='#dce8ff'" onmouseout="this.style.background='#f0f4ff'">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M14 14h2m0 0h3m-3 0v2m0 3h3m-6 0h3"/>
+        </svg>
+        Escanear QR Code com a câmera
+      </button>
+    </div>
+
+    <!-- QR SCANNER CONTAINER -->
+    <div id="qr-container" style="display:none;margin-top:1rem;">
+      <div style="position:relative;background:#000;border-radius:.75rem;overflow:hidden;max-width:360px;margin:0 auto;">
+        <div id="qr-reader" style="width:100%;"></div>
+      </div>
+      <div style="text-align:center;margin-top:.75rem;">
+        <button type="button" onclick="stopScanner()"
+          style="display:inline-flex;align-items:center;gap:.4rem;background:#fee2e2;color:#dc2626;font-weight:600;font-size:.8125rem;padding:.5rem 1rem;border-radius:.5rem;border:none;cursor:pointer;">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          Fechar câmera
+        </button>
+      </div>
+      <p style="text-align:center;font-size:.75rem;color:#9ca3af;margin-top:.5rem;">Aponte a câmera para o QR Code do documento</p>
+    </div>
+
   </div>
 
   <?php if ($searched && $resultado): ?>
@@ -158,4 +183,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </a>
 </section>
 
+<!-- html5-qrcode library -->
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+var html5QrCode = null;
+var scannerActive = false;
+
+function toggleScanner() {
+  var container = document.getElementById('qr-container');
+  if (!scannerActive) {
+    container.style.display = 'block';
+    document.getElementById('btn-scan').innerHTML = '<svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg> Fechar scanner';
+    startScanner();
+  } else {
+    stopScanner();
+  }
+}
+
+function startScanner() {
+  html5QrCode = new Html5Qrcode('qr-reader');
+  html5QrCode.start(
+    { facingMode: 'environment' },
+    { fps: 10, qrbox: { width: 240, height: 240 } },
+    function(decodedText) {
+      document.getElementById('codigo-input').value = decodedText.trim();
+      stopScanner();
+      setTimeout(function() { document.getElementById('verify-form').submit(); }, 300);
+    },
+    function(err) { /* scan errors ignorados */ }
+  ).then(function() {
+    scannerActive = true;
+  }).catch(function(err) {
+    alert('Não foi possível acessar a câmera. Verifique as permissões do navegador.');
+    document.getElementById('qr-container').style.display = 'none';
+  });
+}
+
+function stopScanner() {
+  if (html5QrCode && scannerActive) {
+    html5QrCode.stop().then(function() {
+      html5QrCode.clear();
+      scannerActive = false;
+      document.getElementById('qr-container').style.display = 'none';
+      document.getElementById('btn-scan').innerHTML = '<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 14h2m0 0h3m-3 0v2m0 3h3m-6 0h3"/></svg> Escanear QR Code com a câmera';
+    }).catch(function() { scannerActive = false; });
+  }
+}
+</script>
 <?php include 'includes/footer.php'; ?>

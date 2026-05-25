@@ -1,4 +1,32 @@
-// Mobile menu toggle
+// ── Scroll progress bar ────────────────────────────────────────────────────
+(function () {
+  var bar = document.getElementById('scroll-progress');
+  if (!bar) return;
+  function update() {
+    var scrolled = window.scrollY;
+    var total = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (total > 0 ? Math.min(100, (scrolled / total) * 100) : 0) + '%';
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+
+// ── Scroll reveal ──────────────────────────────────────────────────────────
+(function () {
+  var selectors = '.reveal, .reveal-left, .reveal-right, .reveal-scale';
+  var els = document.querySelectorAll(selectors);
+  if (!els.length) return;
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  els.forEach(function (el) { io.observe(el); });
+})();
+
 document.addEventListener('DOMContentLoaded', function () {
   const btn = document.getElementById('mobile-menu-btn');
   const menu = document.getElementById('nav-links');

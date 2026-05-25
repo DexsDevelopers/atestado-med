@@ -404,3 +404,137 @@ body { font-family: 'Inter', system-ui, sans-serif; }
 .verify-card { transition:box-shadow .25s; }
 .verify-card:focus-within { box-shadow:0 0 0 4px rgba(37,99,235,.12), 0 4px 24px rgba(37,99,235,.1); }
 
+/* ══ PROFESSIONAL UPGRADE ══════════════════════════════════════════════ */
+
+/* Scroll progress bar */
+#scroll-progress {
+  position:fixed; top:0; left:0; height:3px; width:0;
+  background:linear-gradient(90deg,#60a5fa,#2563eb,#7c3aed);
+  z-index:9999; transition:width .08s linear;
+  box-shadow:0 0 8px rgba(37,99,235,.6);
+}
+
+/* Announce bar upgrade */
+.announce-bar {
+  background:linear-gradient(90deg,#1a56db,#2563eb,#1a56db);
+  background-size:200% auto;
+  animation:ann-slide 6s linear infinite;
+}
+@keyframes ann-slide { from{background-position:0% center} to{background-position:200% center} }
+.announce-pulse {
+  display:inline-block; width:7px; height:7px; background:#4ade80;
+  border-radius:50%; margin-right:6px; vertical-align:middle;
+  animation:ann-pulse 1.5s ease-in-out infinite;
+}
+@keyframes ann-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.6)} 50%{box-shadow:0 0 0 5px rgba(74,222,128,0)} }
+
+/* Hero animated gradient */
+@keyframes hero-grad { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+.hero-section {
+  background:linear-gradient(135deg,#1e3a6e,#1d4ed8,#2563eb,#3b6cee,#1d4ed8) !important;
+  background-size:400% 400% !important;
+  animation:hero-grad 12s ease infinite;
+}
+/* Hero decorative orbs */
+.hero-orb {
+  position:absolute; border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle,rgba(255,255,255,.08),transparent);
+  animation:floatY 7s ease-in-out infinite;
+}
+/* Hero content entrance */
+.hero-badge  { animation:fadeInDown .6s .1s cubic-bezier(.22,1,.36,1) both; }
+.hero-h1     { animation:fadeInUp   .7s .2s cubic-bezier(.22,1,.36,1) both; }
+.hero-sub    { animation:fadeInUp   .7s .35s cubic-bezier(.22,1,.36,1) both; }
+.btn-verify  { animation:fadeInUp   .7s .5s cubic-bezier(.22,1,.36,1) both; }
+.btn-verify:active { transform:scale(.97) translateY(0) !important; }
+.trust-badges { animation:fadeInUp .7s .65s cubic-bezier(.22,1,.36,1) both; }
+
+/* Nav upgrade */
+.site-nav {
+  background:rgba(30,58,110,.97) !important;
+  backdrop-filter:blur(12px) !important;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  box-shadow:0 1px 20px rgba(0,0,0,.15);
+}
+.nav-brand { letter-spacing:-.01em; }
+.nav-link {
+  position:relative; transition:background .2s, color .2s;
+}
+.nav-link.active::after {
+  content:''; position:absolute; bottom:-1px; left:50%; transform:translateX(-50%);
+  width:70%; height:2px; background:#fff; border-radius:2px;
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity:0; transform:translateY(32px);
+  transition:opacity .75s cubic-bezier(.22,1,.36,1), transform .75s cubic-bezier(.22,1,.36,1);
+}
+.reveal.visible { opacity:1; transform:translateY(0); }
+.reveal-left  { opacity:0; transform:translateX(-28px); transition:opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1); }
+.reveal-left.visible  { opacity:1; transform:translateX(0); }
+.reveal-right { opacity:0; transform:translateX(28px);  transition:opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1); }
+.reveal-right.visible { opacity:1; transform:translateX(0); }
+.reveal-scale { opacity:0; transform:scale(.9); transition:opacity .6s cubic-bezier(.22,1,.36,1), transform .6s cubic-bezier(.22,1,.36,1); }
+.reveal-scale.visible { opacity:1; transform:scale(1); }
+.rd-1 { transition-delay:.08s; } .rd-2 { transition-delay:.18s; } .rd-3 { transition-delay:.28s; } .rd-4 { transition-delay:.38s; }
+
+/* Step cards (how it works) */
+.step-card {
+  background:#fff; border:1px solid #e2e8f0; border-radius:1.25rem;
+  padding:2rem 1.5rem; text-align:center;
+  box-shadow:0 2px 16px rgba(37,99,235,.07);
+  transition:transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s;
+  cursor:default;
+}
+.step-card:hover { transform:translateY(-6px); box-shadow:0 12px 36px rgba(37,99,235,.14); }
+.step-num {
+  width:52px; height:52px;
+  background:linear-gradient(135deg,#2563eb,#1e3a6e);
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  margin:0 auto 1rem;
+  box-shadow:0 4px 14px rgba(37,99,235,.35);
+  transition:transform .3s;
+}
+.step-card:hover .step-num { transform:scale(1.12) rotate(-4deg); }
+
+/* Trust badge chips */
+.trust-chip {
+  display:inline-flex; align-items:center; gap:.4rem;
+  background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22);
+  border-radius:999px; padding:.35rem .9rem;
+  backdrop-filter:blur(8px);
+  transition:background .2s, transform .2s;
+  cursor:default;
+}
+.trust-chip:hover { background:rgba(255,255,255,.2); transform:translateY(-2px); }
+
+/* Legal notice bar */
+.legal-notice {
+  background:#f8faff; border-top:1px solid #e0e7ff; padding:1.25rem 1.5rem;
+}
+
+/* Verify card pulse on focus */
+.verify-card {
+  transition:box-shadow .3s, transform .3s;
+  animation:fadeInUp .6s .1s cubic-bezier(.22,1,.36,1) both;
+}
+.verify-card:focus-within {
+  box-shadow:0 0 0 4px rgba(37,99,235,.14), 0 8px 32px rgba(37,99,235,.12);
+  transform:translateY(-2px);
+}
+
+/* Input upgrade */
+.input-field {
+  transition:box-shadow .2s, border-color .2s, background .2s;
+}
+
+/* Button press */
+button:active, .btn-verify:active { transform:scale(.98); }
+
+/* Smooth page fade in */
+@keyframes page-in { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+body > main { animation:page-in .4s cubic-bezier(.22,1,.36,1) both; }
+
+/* Announcement bar no print */
+@media print { .announce-bar, #scroll-progress { display:none !important; } }

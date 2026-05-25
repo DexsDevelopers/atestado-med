@@ -18,9 +18,13 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php'); ?>
 </head>
 <body style="margin:0;background:#fff;color:#111827;font-family:'Inter',system-ui,sans-serif;display:flex;flex-direction:column;min-height:100vh;">
 
+<!-- SCROLL PROGRESS -->
+<div id="scroll-progress"></div>
+
 <!-- ANNOUNCEMENT BAR -->
-<div class="announce-bar no-print">
-  Sistema oficial de verificação de documentos médicos &bull; Brasil
+<div class="announce-bar no-print" style="font-size:.8rem;font-weight:500;padding:.45rem 1rem;letter-spacing:.01em;">
+  <span class="announce-pulse"></span>
+  Sistema Oficial de Verificação &nbsp;&bull;&nbsp; Lei 14.063/2020 &nbsp;&bull;&nbsp; LGPD Compliant &nbsp;&bull;&nbsp; Dados protegidos com criptografia SSL
 </div>
 
 <!-- NAVBAR -->

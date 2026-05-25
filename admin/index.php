@@ -537,7 +537,7 @@ function showQR(code) {
     text: url,
     width: 220,
     height: 220,
-    colorDark: '#1e3a6e',
+    colorDark: '#000000',
     colorLight: '#ffffff',
     correctLevel: QRCode.CorrectLevel.H
   });

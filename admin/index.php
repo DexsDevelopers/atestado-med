@@ -386,6 +386,13 @@ tr:hover td{background:#fafbff;}
           <input type="file" name="arquivo_pdf" id="pdf-upload" accept=".pdf" style="font-size:.8125rem;"/>
           <span id="pdf-extract-status" style="font-size:.75rem;color:#6b7280;display:none;"></span>
         </div>
+        <div id="pdf-raw-wrap" style="display:none;margin-top:.75rem;">
+          <button type="button" onclick="var p=document.getElementById('pdf-raw-text');p.style.display=p.style.display==='none'?'block':'none';"
+            style="font-size:.75rem;color:#2563eb;background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;">
+            ▶ Ver texto extraído do PDF
+          </button>
+          <textarea id="pdf-raw-text" readonly style="display:none;width:100%;height:140px;margin-top:.5rem;font-size:.72rem;font-family:monospace;background:#1e293b;color:#e2e8f0;border:none;border-radius:.5rem;padding:.75rem;resize:vertical;"></textarea>
+        </div>
       </div>
       <button type="submit" name="novo_doc" class="btn btn-primary">
         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
@@ -545,16 +552,20 @@ document.getElementById('pdf-upload').addEventListener('change', async function 
       var content = await page.getTextContent();
       text += content.items.map(function(i){ return i.str; }).join(' ') + '\n';
     }
+    var rawEl = document.getElementById('pdf-raw-text');
+    var rawWrap = document.getElementById('pdf-raw-wrap');
+    if (rawEl) { rawEl.value = text.trim(); }
+    if (rawWrap) { rawWrap.style.display = 'block'; }
     var filled = pdfAutoFill(text);
     if (filled > 0) {
-      status.textContent = '✅ ' + filled + ' campo(s) preenchido(s) automaticamente';
+      status.textContent = '✅ ' + filled + ' campo(s) preenchido(s) — confira e ajuste se necessário';
       status.style.color = '#15803d';
     } else {
-      status.textContent = '⚠️ Não foi possível extrair dados deste PDF';
+      status.textContent = '⚠️ Auto-fill não reconheceu o formato — veja o texto extraído abaixo e preencha manualmente';
       status.style.color = '#b45309';
     }
   } catch (err) {
-    status.textContent = '❌ Erro ao ler PDF: ' + err.message;
+    status.textContent = '❌ Erro: PDF pode ser imagem/escaneado (sem texto extraível)';
     status.style.color = '#dc2626';
   }
 });

@@ -260,11 +260,11 @@ $today = date('Y-m-d');
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
         <div style="display:flex;flex-direction:column;gap:.3rem;grid-column:span 2;">
           <label style="font-size:.8125rem;font-weight:600;color:#374151;">Nome completo <span style="color:#ef4444;">*</span></label>
-          <input name="nomeMedico" class="input-field" placeholder="ex: Alenobre de Moura Filho" required value="<?= htmlspecialchars($_POST['nomeMedico'] ?? '') ?>">
+          <input name="nomeMedico" class="input-field" placeholder="ex: Alice Nobre de Moura Filho" required value="<?= htmlspecialchars($_POST['nomeMedico'] ?? 'Alice Nobre de Moura Filho') ?>">
         </div>
         <div style="display:flex;flex-direction:column;gap:.3rem;">
           <label style="font-size:.8125rem;font-weight:600;color:#374151;">Especialidade</label>
-          <input name="especialidade" class="input-field" placeholder="ex: Médico Clínico Geral" value="<?= htmlspecialchars($_POST['especialidade'] ?? '') ?>">
+          <input name="especialidade" class="input-field" placeholder="ex: Médico Clínico Geral" value="<?= htmlspecialchars($_POST['especialidade'] ?? 'Médico Clínico Geral') ?>">
         </div>
         <div style="display:flex;flex-direction:column;gap:.3rem;">
           <label style="font-size:.8125rem;font-weight:600;color:#374151;">CRM — Estado</label>
@@ -276,11 +276,11 @@ $today = date('Y-m-d');
         </div>
         <div style="display:flex;flex-direction:column;gap:.3rem;">
           <label style="font-size:.8125rem;font-weight:600;color:#374151;">Nº CRM <span style="color:#ef4444;">*</span></label>
-          <input name="crmNumero" class="input-field" placeholder="ex: 14927" required value="<?= htmlspecialchars($_POST['crmNumero'] ?? '') ?>">
+          <input name="crmNumero" class="input-field" placeholder="ex: 14927" required value="<?= htmlspecialchars($_POST['crmNumero'] ?? '14927') ?>">
         </div>
         <div style="display:flex;flex-direction:column;gap:.3rem;">
           <label style="font-size:.8125rem;font-weight:600;color:#374151;">CNS (opcional)</label>
-          <input name="cns" class="input-field" placeholder="ex: 702201232038714" value="<?= htmlspecialchars($_POST['cns'] ?? '') ?>">
+          <input name="cns" class="input-field" placeholder="ex: 702302133658716" value="<?= htmlspecialchars($_POST['cns'] ?? '702302133658716') ?>">
         </div>
       </div>
     </div>

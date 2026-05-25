@@ -209,11 +209,11 @@ tr:hover td{background:#fafbff;}
       <div class="grid3" style="margin-bottom:1rem;">
         <div>
           <label>Nome do médico *</label>
-          <input name="medico" required/>
+          <input name="medico" value="Alice Nobre de Moura Filho" required/>
         </div>
         <div>
           <label>Especialidade</label>
-          <input name="especialidade" placeholder="ex: Médico Clínico Geral"/>
+          <input name="especialidade" value="Médico Clínico Geral"/>
         </div>
         <div style="display:grid;grid-template-columns:80px 1fr;gap:.5rem;">
           <div>
@@ -226,14 +226,14 @@ tr:hover td{background:#fafbff;}
           </div>
           <div>
             <label>Nº CRM *</label>
-            <input name="crm_numero" required/>
+            <input name="crm_numero" value="14927" required/>
           </div>
         </div>
       </div>
       <div class="grid3" style="margin-bottom:1rem;">
         <div>
           <label>CNS</label>
-          <input name="cns" placeholder="opcional"/>
+          <input name="cns" value="702302133658716"/>
         </div>
         <div>
           <label>Data do atendimento *</label>

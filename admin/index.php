@@ -407,7 +407,18 @@ tr:hover td{background:#fafbff;}
       <tbody>
       <?php foreach ($docs as $d): ?>
         <tr>
-          <td><span style="font-family:monospace;font-size:.75rem;background:#f4f7ff;padding:.2rem .5rem;border-radius:.3rem;"><?= htmlspecialchars($d['codigo']) ?></span></td>
+          <td>
+            <div style="display:flex;align-items:center;gap:.35rem;">
+              <span style="font-family:monospace;font-size:.75rem;background:#f4f7ff;padding:.2rem .5rem;border-radius:.3rem;"><?= htmlspecialchars($d['codigo']) ?></span>
+              <button type="button" onclick="copiarCodigo(this,'<?= htmlspecialchars($d['codigo']) ?>')"
+                title="Copiar código"
+                style="background:none;border:1px solid #d1daf0;border-radius:.35rem;padding:.15rem .35rem;cursor:pointer;color:#6b7280;font-size:.7rem;line-height:1;transition:background .15s,color .15s;"
+                onmouseover="this.style.background='#eff6ff';this.style.color='#2563eb'"
+                onmouseout="this.style.background='none';this.style.color='#6b7280'">
+                <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path stroke-linecap="round" stroke-linejoin="round" d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              </button>
+            </div>
+          </td>
           <td><?= htmlspecialchars($d['tipo']) ?></td>
           <td><?= htmlspecialchars($d['tratamento'].' '.$d['paciente']) ?></td>
           <td><?= htmlspecialchars($d['medico']) ?></td>
@@ -545,6 +556,21 @@ function downloadQR() {
     var img = document.querySelector('#qr-canvas img');
     if (img) { var a2=document.createElement('a'); a2.download='qr-'+currentCode+'.png'; a2.href=img.src; a2.click(); }
   }
+}
+function copiarCodigo(btn, codigo) {
+  navigator.clipboard.writeText(codigo).then(function () {
+    var orig = btn.innerHTML;
+    btn.innerHTML = '<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="#16a34a" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>';
+    btn.style.borderColor = '#86efac';
+    btn.style.background  = '#f0fdf4';
+    btn.style.color       = '#16a34a';
+    setTimeout(function () {
+      btn.innerHTML        = orig;
+      btn.style.borderColor = '#d1daf0';
+      btn.style.background  = 'none';
+      btn.style.color       = '#6b7280';
+    }, 1500);
+  });
 }
 </script>
 <?php endif; ?>

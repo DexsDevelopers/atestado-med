@@ -74,70 +74,104 @@ $today = date('Y-m-d');
   </div>
 
   <!-- ====== THE DOCUMENT ====== -->
-  <div id="doc-print" style="background:#fff;border:1px solid #ccc;padding:2.5rem 3rem;font-family:'Times New Roman',Times,serif;font-size:11.5pt;line-height:1.65;color:#111;box-shadow:0 4px 24px rgba(0,0,0,.10);">
+  <div id="doc-print" style="background:#fff;border:1px solid #d1d5db;padding:1.8cm 2.2cm 1.2cm;font-family:'Times New Roman',Times,serif;font-size:11.5pt;line-height:1.7;color:#111;box-shadow:0 4px 28px rgba(0,0,0,.11);min-height:26cm;display:flex;flex-direction:column;">
 
-    <!-- HEADER -->
-    <table style="width:100%;border-bottom:2px solid #444;padding-bottom:.6rem;margin-bottom:.8rem;">
-      <tr valign="top">
-        <td>
-          <div style="font-size:13.5pt;font-weight:800;text-transform:uppercase;letter-spacing:.4px;"><?= htmlspecialchars($data['unidade'] ?: 'Estabelecimento de Saúde') ?></div>
+    <!-- HEADER ─────────────────────────────────────────── -->
+    <table style="width:100%;border-bottom:2px solid #333;padding-bottom:.65rem;margin-bottom:1.1rem;" cellpadding="0" cellspacing="0">
+      <tr valign="middle">
+
+        <!-- LOGO UPA 24h -->
+        <td style="width:110px;padding-right:14px;">
+          <div style="border:2.5px solid #1a6e2e;border-radius:7px;overflow:hidden;width:100px;text-align:center;font-family:Arial,sans-serif;">
+            <div style="background:#1a6e2e;padding:5px 4px 2px;">
+              <span style="color:#f5c518;font-weight:900;font-size:14.5pt;letter-spacing:.5px;line-height:1;">UPA</span>
+              <span style="color:#fff;font-weight:900;font-size:10.5pt;letter-spacing:.5px;line-height:1;"> 24h</span>
+            </div>
+            <div style="background:#fff;padding:3px 2px 4px;border-top:1.5px solid #1a6e2e;">
+              <div style="font-size:5.5pt;font-weight:700;color:#1a6e2e;text-transform:uppercase;letter-spacing:.4px;line-height:1.3;">UNIDADE DE PRONTO<br>ATENDIMENTO</div>
+            </div>
+          </div>
+        </td>
+
+        <!-- NOME / ENDEREÇO CENTRALIZADO -->
+        <td style="text-align:center;padding:0 .5rem;">
+          <div style="font-size:12.5pt;font-weight:800;text-transform:uppercase;letter-spacing:.3px;font-family:Arial,sans-serif;"><?= htmlspecialchars($data['unidade'] ?: 'UNIDADE DE PRONTO ATENDIMENTO') ?></div>
+          <?php if ($data['unidade']): ?><div style="font-size:9.5pt;font-family:Arial,sans-serif;">(UPA 24h UPA)</div><?php endif; ?>
           <?php if ($data['enderecoUnidade']): ?>
-          <div style="font-size:8.5pt;color:#555;margin-top:2px;"><?= htmlspecialchars($data['enderecoUnidade']) ?></div>
+          <div style="font-size:8pt;color:#555;margin-top:2px;font-family:Arial,sans-serif;"><?= htmlspecialchars($data['enderecoUnidade']) ?></div>
           <?php endif; ?>
         </td>
-        <td style="text-align:right;">
-          <div style="font-size:14pt;font-weight:700;font-style:italic;">Atestado</div>
+
+        <!-- PRONTUÁRIO -->
+        <td style="width:72px;text-align:right;vertical-align:top;padding-top:2px;">
+          <div style="font-size:8.5pt;font-family:Arial,sans-serif;color:#333;">Prontuário</div>
         </td>
       </tr>
     </table>
 
-    <!-- BODY PARAGRAPHS -->
-    <p style="text-align:justify;margin:0 0 .9rem;">
-      Declaro, para os devidos fins, que o(a) <?= htmlspecialchars($data['tratamento']) ?>&nbsp;<strong><?= htmlspecialchars($data['nomePaciente']) ?></strong> foi atendido(a) nesta <?= htmlspecialchars($data['unidade'] ?: 'Unidade de Saúde') ?> no dia <strong><?= htmlspecialchars($dataFormatada) ?></strong>, apresentando quadro clínico compatível com <?= htmlspecialchars($data['quadroClinico'] ?: 'quadro clínico em avaliação') ?>.
+    <!-- BODY PARAGRAPHS ─────────────────────────────────── -->
+    <p style="text-align:justify;margin:0 0 .95rem;">
+      Declaro, para os devidos fins, que o <?= htmlspecialchars($data['tratamento']) ?>&nbsp;<?= htmlspecialchars($data['nomePaciente']) ?> foi atendido nesta Unidade de Pronto Atendimento (UPA) no dia <?= date('d/m/Y', strtotime($data['dataAtend'])) ?>, apresentando quadro clínico compatível com <?= htmlspecialchars($data['quadroClinico'] ?: 'quadro clínico em avaliação') ?>.
     </p>
-    <p style="text-align:justify;margin:0 0 .9rem;">
+    <p style="text-align:justify;margin:0 0 .95rem;">
       Após avaliação médica, constatou-se a necessidade de afastamento de suas atividades habituais <?= htmlspecialchars($textoAfast) ?>, sendo recomendado <?= htmlspecialchars($data['recomendacoes'] ?: 'repouso e acompanhamento médico') ?>.
     </p>
-    <p style="text-align:justify;margin:0 0 2rem;">
+    <p style="text-align:justify;margin:0 0 0;">
       Firmo o presente atestado para os devidos fins.
     </p>
 
-    <!-- BOTTOM SECTION -->
-    <table style="width:100%;margin-top:1rem;">
+    <!-- SPACER -->
+    <div style="flex:1;min-height:2.5cm;"></div>
+
+    <!-- BOTTOM SECTION ──────────────────────────────────── -->
+    <table style="width:100%;" cellpadding="0" cellspacing="0">
       <tr valign="bottom">
-        <td style="width:48%;font-size:9.5pt;line-height:1.8;">
+
+        <!-- ESQUERDA: Obs / CID / Cidade / Código -->
+        <td style="width:46%;font-size:9.5pt;line-height:2;vertical-align:bottom;">
+          <div style="font-size:8.5pt;font-style:italic;color:#444;margin-bottom:.1rem;">Observações</div>
           <?php if ($data['observacoes']): ?>
-          <div><em>Observações:</em><br><?= nl2br(htmlspecialchars($data['observacoes'])) ?></div>
+          <div style="font-size:9pt;margin-bottom:.4rem;"><?= nl2br(htmlspecialchars($data['observacoes'])) ?></div>
+          <?php else: ?>
+          <div style="margin-bottom:.4rem;">&nbsp;</div>
           <?php endif; ?>
           <?php if ($data['cid']): ?>
-          <div>CID: <?= htmlspecialchars($data['cid']) ?></div>
+          <div>CID <?= htmlspecialchars(strtoupper($data['cid'])) ?></div>
           <?php endif; ?>
-          <div style="margin-top:.4rem;">
+          <div style="margin-top:.6rem;line-height:1.5;">
             <?= htmlspecialchars($cidadeData) ?><br>
-            Código: <span style="font-family:Courier,monospace;font-size:8.5pt;"><?= htmlspecialchars($codigo) ?></span>
+            <span style="font-size:8.5pt;">código: <span style="font-family:Courier,monospace;"><?= htmlspecialchars($codigo) ?></span></span>
           </div>
         </td>
-        <td style="width:4%;"></td>
-        <td style="width:48%;text-align:center;">
-          <div style="border-top:1.5px solid #222;padding-top:.4rem;margin-top:3rem;">
-            <div style="font-weight:700;font-size:10.5pt;"><?= htmlspecialchars($data['nomeMedico']) ?></div>
-            <?php if ($data['especialidade']): ?>
-            <div style="font-size:9pt;"><?= htmlspecialchars($data['especialidade']) ?></div>
-            <?php endif; ?>
-            <div style="font-size:9pt;">CRM <?= htmlspecialchars($data['crmEstado']) ?> <?= htmlspecialchars($data['crmNumero']) ?></div>
-            <?php if ($data['cns']): ?>
-            <div style="font-size:8.5pt;color:#444;">CNS: <?= htmlspecialchars($data['cns']) ?></div>
-            <?php endif; ?>
+
+        <td style="width:8%;"></td>
+
+        <!-- DIREITA: Assinatura / Nome / CRM -->
+        <td style="width:46%;text-align:center;vertical-align:bottom;">
+          <!-- Espaço para assinatura -->
+          <div style="height:4rem;display:flex;align-items:flex-end;justify-content:center;padding-bottom:2px;">
+            <div style="font-size:8pt;color:#aaa;font-family:Arial,sans-serif;font-style:italic;">(assinatura)</div>
+          </div>
+          <!-- Linha -->
+          <div style="border-top:1.5px solid #111;padding-top:.35rem;">
+            <div style="font-size:10.5pt;font-weight:600;font-family:Arial,sans-serif;"><?= htmlspecialchars($data['nomeMedico']) ?></div>
+            <div style="font-size:8.5pt;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:.2px;margin-top:1px;">
+              <?= htmlspecialchars(strtoupper($data['especialidade'] ?? '')) ?>
+              CRM - <?= htmlspecialchars(strtoupper($data['crmEstado'])) ?>
+              <?= htmlspecialchars($data['crmNumero']) ?>-<?= htmlspecialchars(strtolower($data['crmEstado'])) ?>/
+              <?php if ($data['cns']): ?>CNS: <?= htmlspecialchars($data['cns']) ?><?php endif; ?>
+            </div>
           </div>
         </td>
       </tr>
     </table>
 
-    <!-- FOOTER STRIP -->
-    <div style="margin-top:2rem;border-top:1px solid #bbb;padding-top:.35rem;font-size:8pt;color:#777;display:flex;justify-content:space-between;">
-      <span>VerificaMed — Sistema Nacional de Verificação</span>
-      <span>verificamed.website</span>
-      <span>Lei 14.063/2020</span>
+    <!-- FOOTER STRIP ────────────────────────────────────── -->
+    <div style="margin-top:1.2rem;border-top:1px solid #bbb;padding-top:.3rem;font-size:7pt;color:#666;display:flex;justify-content:space-between;font-family:Arial,sans-serif;">
+      <span>Gerado por <?= strtoupper(htmlspecialchars($data['nomeMedico'])) ?></span>
+      <span>© VerificaMed | verificamed.website</span>
+      <span>1/1</span>
+      <span><?= date('d/m/Y H:i') ?></span>
     </div>
   </div>
 

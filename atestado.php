@@ -158,9 +158,7 @@ $_sigSrc  = file_exists($_sigPath)
           <div style="height:5rem;display:flex;align-items:flex-end;justify-content:center;padding-bottom:0;">
             <?php if ($_sigSrc): ?>
             <img src="<?= $_sigSrc ?>" alt="Assinatura"
-              style="max-height:80px;max-width:200px;display:block;margin:0 auto;
-                     filter:invert(1) hue-rotate(200deg) saturate(1.8) brightness(0.85);
-                     mix-blend-mode:multiply;">
+              style="max-height:85px;max-width:210px;display:block;margin:0 auto;">
             <?php else: ?>
             <div style="height:4rem;"></div>
             <?php endif; ?>

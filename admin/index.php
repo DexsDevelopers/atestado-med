@@ -90,7 +90,7 @@ $today = date('Y-m-d');
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Admin — VerificaMed</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<script src="https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter',system-ui,sans-serif;background:#f4f7ff;color:#111827;min-height:100vh;}
@@ -398,7 +398,7 @@ tr:hover td{background:#fafbff;}
 <div class="qr-modal" id="qr-modal" onclick="if(event.target===this)closeQR()">
   <div class="qr-box">
     <div style="font-size:.9375rem;font-weight:700;color:#111827;margin-bottom:1rem;">QR Code do Documento</div>
-    <canvas id="qr-canvas" style="display:block;margin:0 auto;border-radius:.5rem;"></canvas>
+    <div id="qr-canvas" style="display:flex;justify-content:center;align-items:center;margin:0 auto;"></div>
     <div id="qr-code-text" style="font-family:monospace;font-size:.75rem;color:#6b7280;margin-top:.5rem;word-break:break-all;"></div>
     <div style="display:flex;gap:.75rem;justify-content:center;margin-top:1.25rem;">
       <button onclick="downloadQR()" class="btn btn-primary" style="font-size:.8125rem;">⬇ Baixar PNG</button>
@@ -461,22 +461,36 @@ function preencherQuadro(key) {
   document.getElementById('campo-rec').value    = d.r;
 }
 var currentCode = '';
+var _qrInstance = null;
 function showQR(code) {
   currentCode = code;
   document.getElementById('qr-modal').classList.add('open');
   document.getElementById('qr-code-text').textContent = code;
-  var canvas = document.getElementById('qr-canvas');
-  QRCode.toCanvas(canvas, code, { width: 220, margin: 2, color: { dark:'#1e3a6e', light:'#ffffff' } }, function(){});
+  var container = document.getElementById('qr-canvas');
+  container.innerHTML = '';
+  _qrInstance = new QRCode(container, {
+    text: code,
+    width: 220,
+    height: 220,
+    colorDark: '#1e3a6e',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.H
+  });
 }
 function closeQR() {
   document.getElementById('qr-modal').classList.remove('open');
 }
 function downloadQR() {
-  var canvas = document.getElementById('qr-canvas');
-  var a = document.createElement('a');
-  a.download = 'qr-' + currentCode + '.png';
-  a.href = canvas.toDataURL('image/png');
-  a.click();
+  var canvas = document.querySelector('#qr-canvas canvas');
+  if (canvas) {
+    var a = document.createElement('a');
+    a.download = 'qr-' + currentCode + '.png';
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+  } else {
+    var img = document.querySelector('#qr-canvas img');
+    if (img) { var a2=document.createElement('a'); a2.download='qr-'+currentCode+'.png'; a2.href=img.src; a2.click(); }
+  }
 }
 </script>
 <?php endif; ?>

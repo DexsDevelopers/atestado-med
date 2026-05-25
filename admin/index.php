@@ -361,7 +361,7 @@ tr:hover td{background:#fafbff;}
       <thead>
         <tr>
           <th>Código</th><th>Tipo</th><th>Paciente</th><th>Médico</th>
-          <th>Data</th><th>Status</th><th>QR</th><th></th>
+          <th>Data</th><th>Status</th><th>QR</th><th>Ver</th><th></th>
         </tr>
       </thead>
       <tbody>
@@ -375,6 +375,11 @@ tr:hover td{background:#fafbff;}
           <td><span class="badge badge-<?= $d['status'] ?>"><?= $d['status'] ?></span></td>
           <td>
             <button onclick="showQR('<?= htmlspecialchars($d['codigo']) ?>')" class="btn btn-gray" style="font-size:.75rem;padding:.3rem .75rem;">QR</button>
+          </td>
+          <td>
+            <a href="ver.php?id=<?= $d['id'] ?>" target="_blank" class="btn btn-primary" style="font-size:.75rem;padding:.3rem .75rem;text-decoration:none;">
+              Ver
+            </a>
           </td>
           <td>
             <?php if ($d['status'] === 'ativo'): ?>

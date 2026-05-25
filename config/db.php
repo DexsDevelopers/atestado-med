@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('America/Sao_Paulo');
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'u853242961_atestadomed');
 define('DB_USER', 'u853242961_atestado2');

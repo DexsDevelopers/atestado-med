@@ -1,4 +1,6 @@
-<?php $currentPage = basename($_SERVER['PHP_SELF'], '.php'); ?>
+<?php
+date_default_timezone_set('America/Sao_Paulo');
+$currentPage = basename($_SERVER['PHP_SELF'], '.php'); ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>

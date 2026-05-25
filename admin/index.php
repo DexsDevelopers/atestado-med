@@ -639,9 +639,27 @@ function pdfAutoFill(text) {
   var mEnd = t.match(/(?:Av\.?|Avenida|Rua|R\.|Trav\.?|Travessa|Al\.?|Alameda|Est\.?|Estrada)\s+[^,]{3,60},\s*\d+[^,\n]{0,80}/i);
   if (mEnd) { if (setField('endereco', mEnd[0].replace(/\s+/g,' ').trim().substring(0,120))) count++; }
 
-  // Quadro clínico — apresentou / apresentando / compativel com
-  var mQ = t.match(/(?:apresentou|apresentando|compatível com)\s+([^.]{10,300})\.?/i);
-  if (mQ) { var qEl=document.getElementById('campo-quadro'); if(qEl&&!qEl.value){qEl.value=mQ[0].trim();qEl.style.background='#fefce8';qEl.style.borderColor='#fbbf24';setTimeout(function(){qEl.style.background='';qEl.style.borderColor='';},4000);count++;} }
+  // Quadro clínico — multiple pattern variants
+  var qEl = document.getElementById('campo-quadro');
+  if (qEl && !qEl.value) {
+    var mQ =
+      t.match(/quadro cl[ií]nico[:\s]+([^.]{10,400})/i) ||
+      t.match(/(?:apresentou|apresentando)\s+quadro[^.]{5,400}/i) ||
+      t.match(/apresentando\s+([^.]{10,300})/i) ||
+      t.match(/apresentou\s+([^.]{10,300})/i) ||
+      t.match(/sintomas?[:\s]+([^.]{10,300})/i) ||
+      t.match(/diagn[oó]stico[:\s]+([^.]{10,300})/i) ||
+      t.match(/compatível com\s+([^.]{10,300})/i);
+    if (mQ) {
+      var qVal = (mQ[1] || mQ[0]).trim();
+      if (qVal.length >= 10) {
+        qEl.value = qVal;
+        qEl.style.background = '#fefce8'; qEl.style.borderColor = '#fbbf24';
+        setTimeout(function(){ qEl.style.background=''; qEl.style.borderColor=''; }, 4000);
+        count++;
+      }
+    }
+  }
 
   // Recomendações
   var mRec = t.match(/(?:recomendado|recomenda-se|recomendamos|orienta-se|prescrito)[:\s]+([^.]{10,300})\.?/i);

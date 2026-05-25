@@ -1,32 +1,24 @@
 <?php
 $pageTitle = 'Verificar Documento — VerificaMed';
+require_once 'config/db.php';
 
-$mockDocs = [
-    'VM-2024-001234' => [
-        'tipo'       => 'Atestado Médico',
-        'paciente'   => 'João da Silva',
-        'medico'     => 'Dr. Carlos Mendes',
-        'crm'        => 'CRM/SP 123456',
-        'emissao'    => '10/11/2024',
-    ],
-    'VM-2024-005678' => [
-        'tipo'       => 'Receita Médica',
-        'paciente'   => 'Maria Oliveira',
-        'medico'     => 'Dra. Ana Beatriz',
-        'crm'        => 'CRM/MG 654321',
-        'emissao'    => '08/11/2024',
-    ],
-];
-
-$codigo   = '';
+$codigo    = '';
 $resultado = null;
 $searched  = false;
+$dbError   = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $codigo   = strtoupper(trim($_POST['codigo'] ?? ''));
     $searched = true;
-    if ($codigo && isset($mockDocs[$codigo])) {
-        $resultado = $mockDocs[$codigo];
+    if ($codigo) {
+        try {
+            $db   = getDB();
+            $stmt = $db->prepare("SELECT * FROM documentos WHERE codigo = ? AND status = 'ativo' LIMIT 1");
+            $stmt->execute([$codigo]);
+            $resultado = $stmt->fetch() ?: null;
+        } catch (PDOException $e) {
+            $dbError = true;
+        }
     }
 }
 ?>
@@ -92,52 +84,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   </div>
 
-  <?php if ($searched && $resultado): ?>
+  <?php if ($dbError): ?>
+  <div style="background:#fff;border:2px solid #f59e0b;border-radius:1.25rem;padding:1.5rem;margin-top:1.5rem;">
+    <p style="color:#92400e;font-weight:600;">Erro ao conectar ao banco de dados. Verifique as configurações.</p>
+  </div>
+  <?php elseif ($searched && $resultado): ?>
   <div class="result-success" style="margin-top:1.5rem;">
-    <div class="flex items-center gap-3 mb-6">
-      <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
-        <svg class="w-6 h-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
+    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem;">
+      <div style="width:3rem;height:3rem;background:#dcfce7;border-radius:.75rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#16a34a" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
       </div>
       <div>
-        <h2 class="text-lg font-bold text-emerald-700">Documento Autêntico</h2>
-        <p class="text-sm text-gray-500">Verificado com sucesso na base Verificamed</p>
+        <div style="font-size:1.0625rem;font-weight:700;color:#15803d;">Documento Autêntico</div>
+        <div style="font-size:.8125rem;color:#6b7280;">Verificado com sucesso na base VerificaMed</div>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 rounded-xl p-5">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;background:#f9fafb;border-radius:.75rem;padding:1.25rem;">
       <div>
-        <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Tipo de Documento</p>
-        <div class="flex items-center gap-2">
-          <?php if ($resultado['tipo'] === 'Atestado Médico'): ?>
-          <svg class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          <?php else: ?>
-          <svg class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-          <?php endif; ?>
-          <p class="font-semibold text-gray-900 text-sm"><?= htmlspecialchars($resultado['tipo']) ?></p>
-        </div>
+        <div style="font-size:.7rem;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem;">Tipo</div>
+        <div style="font-weight:600;font-size:.875rem;color:#111827;"><?= htmlspecialchars($resultado['tipo']) ?></div>
       </div>
       <div>
-        <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Código</p>
-        <p class="font-mono font-semibold text-gray-900 text-sm"><?= htmlspecialchars($codigo) ?></p>
+        <div style="font-size:.7rem;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem;">Código</div>
+        <div style="font-weight:600;font-size:.875rem;color:#111827;font-family:monospace;"><?= htmlspecialchars($codigo) ?></div>
       </div>
       <div>
-        <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Paciente</p>
-        <p class="font-semibold text-gray-900 text-sm"><?= htmlspecialchars($resultado['paciente']) ?></p>
+        <div style="font-size:.7rem;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem;">Paciente</div>
+        <div style="font-weight:600;font-size:.875rem;color:#111827;"><?= htmlspecialchars($resultado['tratamento'] . ' ' . $resultado['paciente']) ?></div>
       </div>
       <div>
-        <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Médico Responsável</p>
-        <p class="font-semibold text-gray-900 text-sm"><?= htmlspecialchars($resultado['medico']) ?></p>
+        <div style="font-size:.7rem;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem;">Médico</div>
+        <div style="font-weight:600;font-size:.875rem;color:#111827;"><?= htmlspecialchars($resultado['medico']) ?></div>
       </div>
       <div>
-        <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">CRM</p>
-        <p class="font-semibold text-gray-900 text-sm"><?= htmlspecialchars($resultado['crm']) ?></p>
+        <div style="font-size:.7rem;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem;">CRM</div>
+        <div style="font-weight:600;font-size:.875rem;color:#111827;">CRM <?= htmlspecialchars($resultado['crm_estado']) ?> <?= htmlspecialchars($resultado['crm_numero']) ?></div>
       </div>
       <div>
-        <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Data de Emissão</p>
-        <p class="font-semibold text-gray-900 text-sm"><?= htmlspecialchars($resultado['emissao']) ?></p>
+        <div style="font-size:.7rem;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem;">Data do Atendimento</div>
+        <div style="font-weight:600;font-size:.875rem;color:#111827;"><?= htmlspecialchars(date('d/m/Y', strtotime($resultado['data_atend']))) ?></div>
       </div>
+      <?php if ($resultado['unidade']): ?>
+      <div style="grid-column:span 2;">
+        <div style="font-size:.7rem;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem;">Unidade</div>
+        <div style="font-weight:600;font-size:.875rem;color:#111827;"><?= htmlspecialchars($resultado['unidade']) ?></div>
+      </div>
+      <?php endif; ?>
     </div>
 
     <div class="mt-5 flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 rounded-xl p-3 border border-emerald-200">

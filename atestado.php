@@ -54,6 +54,12 @@ $today = date('Y-m-d');
 ?>
 <?php include 'includes/header.php'; ?>
 
+<?php
+$_sigPath = __DIR__ . '/assets/img/assinatura.png';
+$_sigSrc  = file_exists($_sigPath)
+    ? 'data:image/png;base64,' . base64_encode(file_get_contents($_sigPath))
+    : '';
+?>
 <?php if ($submitted): ?>
 <!-- DOCUMENT OUTPUT -->
 <style>
@@ -148,9 +154,16 @@ $today = date('Y-m-d');
 
         <!-- DIREITA: Assinatura / Nome / CRM -->
         <td style="width:46%;text-align:center;vertical-align:bottom;">
-          <!-- Espaço para assinatura -->
-          <div style="height:4rem;display:flex;align-items:flex-end;justify-content:center;padding-bottom:2px;">
-            <div style="font-size:8pt;color:#aaa;font-family:Arial,sans-serif;font-style:italic;">(assinatura)</div>
+          <!-- Imagem de assinatura -->
+          <div style="height:5rem;display:flex;align-items:flex-end;justify-content:center;padding-bottom:0;">
+            <?php if ($_sigSrc): ?>
+            <img src="<?= $_sigSrc ?>" alt="Assinatura"
+              style="max-height:80px;max-width:200px;display:block;margin:0 auto;
+                     filter:invert(1) hue-rotate(200deg) saturate(1.8) brightness(0.85);
+                     mix-blend-mode:multiply;">
+            <?php else: ?>
+            <div style="height:4rem;"></div>
+            <?php endif; ?>
           </div>
           <!-- Linha -->
           <div style="border-top:1.5px solid #111;padding-top:.35rem;">

@@ -26,13 +26,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['novo_doc']) && !empty($_SESSION['admin'])) {
         try {
             $db = getDB();
+            // migration: add arquivo_pdf column if missing
+            try { $db->exec("ALTER TABLE documentos ADD COLUMN arquivo_pdf VARCHAR(255) DEFAULT NULL"); } catch(PDOException $e){}
+
             $codigo = strtoupper(substr(bin2hex(random_bytes(9)), 0, 18));
+
+            // handle PDF upload
+            $arquivo_pdf = null;
+            if (isset($_FILES['arquivo_pdf']) && $_FILES['arquivo_pdf']['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = dirname(__DIR__) . '/uploads/atestados/';
+                if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+                $arquivo_pdf = $codigo . '.pdf';
+                move_uploaded_file($_FILES['arquivo_pdf']['tmp_name'], $uploadDir . $arquivo_pdf);
+            }
 
             $stmt = $db->prepare("INSERT INTO documentos
                 (codigo, tipo, tratamento, paciente, unidade, endereco, medico, especialidade,
                  crm_estado, crm_numero, cns, data_atend, quadro, tipo_afast, dias_afast,
-                 data_afast, recomendacoes, cid, cidade, observacoes)
-                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                 data_afast, recomendacoes, cid, cidade, observacoes, arquivo_pdf)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
             $stmt->execute([
                 $codigo,
@@ -55,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 strtoupper(trim($_POST['cid'] ?? '')),
                 trim($_POST['cidade']       ?? ''),
                 trim($_POST['observacoes']  ?? ''),
+                $arquivo_pdf,
             ]);
             $msg = $codigo;
         } catch (PDOException $e) {
@@ -178,7 +191,7 @@ tr:hover td{background:#fafbff;}
   <!-- FORM NOVO DOCUMENTO -->
   <div class="card" style="margin-bottom:2rem;">
     <div class="card-title">➕ Cadastrar novo documento</div>
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
       <div class="grid3" style="margin-bottom:1rem;">
         <div>
           <label>Tipo</label>
@@ -345,6 +358,12 @@ tr:hover td{background:#fafbff;}
       <div style="margin-bottom:1rem;">
         <label>Observações</label>
         <textarea name="observacoes" rows="2" style="resize:vertical;"></textarea>
+      </div>
+      <div style="margin-bottom:1rem;padding:1rem;background:#f8faff;border:1.5px dashed #93c5fd;border-radius:.625rem;">
+        <label style="font-size:.8125rem;font-weight:600;color:#1e3a6e;margin-bottom:.4rem;display:block;">
+          📎 Upload do Atestado em PDF <span style="font-weight:400;color:#6b7280;">(opcional — disponibilizado na página de verificação)</span>
+        </label>
+        <input type="file" name="arquivo_pdf" accept=".pdf" style="font-size:.8125rem;"/>
       </div>
       <button type="submit" name="novo_doc" class="btn btn-primary">
         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>

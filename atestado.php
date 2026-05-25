@@ -87,9 +87,12 @@ $_logoSrc  = file_exists($_logoPath) ? 'data:image/png;base64,' . base64_encode(
       <tr valign="middle">
 
         <!-- LOGO UPA 24h -->
-        <td style="width:130px;padding-right:14px;">
+        <td style="width:125px;padding-right:14px;vertical-align:middle;">
           <?php if ($_logoSrc): ?>
-          <img src="<?= $_logoSrc ?>" alt="UPA 24h" style="width:120px;height:auto;display:block;">
+          <div style="width:120px;height:56px;overflow:hidden;">
+            <img src="<?= $_logoSrc ?>" alt="UPA 24h"
+              style="width:262px;margin-left:-62px;margin-top:-97px;display:block;">
+          </div>
           <?php endif; ?>
         </td>
 

@@ -77,9 +77,12 @@ body{background:#e8edf5;font-family:Arial,sans-serif;padding:2rem 1rem;}
   <!-- HEADER -->
   <table style="width:100%;border-bottom:2px solid #333;padding-bottom:.65rem;margin-bottom:1.1rem;" cellpadding="0" cellspacing="0">
     <tr valign="middle">
-      <td style="width:130px;padding-right:14px;">
+      <td style="width:125px;padding-right:14px;vertical-align:middle;">
         <?php if ($_logoSrc): ?>
-        <img src="<?= $_logoSrc ?>" alt="UPA 24h" style="width:120px;height:auto;display:block;">
+        <div style="width:120px;height:56px;overflow:hidden;">
+          <img src="<?= $_logoSrc ?>" alt="UPA 24h"
+            style="width:262px;margin-left:-62px;margin-top:-97px;display:block;">
+        </div>
         <?php endif; ?>
       </td>
       <td style="text-align:center;padding:0 .5rem;">

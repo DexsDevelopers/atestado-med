@@ -241,6 +241,39 @@ $shareUrl = $resultado ? $protocol . '://' . $_SERVER['HTTP_HOST']
     </button>
   </div>
 
+  <?php
+  $pdfFile = $resultado['arquivo_pdf'] ?? null;
+  $pdfPath = __DIR__ . '/uploads/atestados/' . $pdfFile;
+  $pdfUrl  = 'uploads/atestados/' . rawurlencode($pdfFile ?? '');
+  if ($pdfFile && file_exists($pdfPath)):
+  ?>
+  <!-- ATESTADO PDF -->
+  <div style="max-width:820px;margin:2rem auto 0;width:100%;padding:0 1rem;">
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:1.25rem;overflow:hidden;box-shadow:0 4px 24px rgba(37,99,235,.07);">
+      <div style="background:linear-gradient(135deg,#1e3a6e,#2563eb);padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <span style="color:#fff;font-weight:700;font-size:.9375rem;">Documento Original</span>
+          <span style="background:rgba(255,255,255,.15);color:#fff;font-size:.7rem;font-weight:600;padding:.2rem .6rem;border-radius:999px;letter-spacing:.5px;">PDF</span>
+        </div>
+        <a href="<?= htmlspecialchars($pdfUrl) ?>" download
+           style="display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:.5rem;padding:.4rem .9rem;font-size:.8125rem;font-weight:600;text-decoration:none;">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Baixar PDF
+        </a>
+      </div>
+      <iframe src="<?= htmlspecialchars($pdfUrl) ?>" width="100%" height="680"
+        style="display:block;border:none;"
+        title="Atestado Médico">
+        <p style="padding:2rem;text-align:center;">
+          Seu navegador não suporta visualização de PDF.
+          <a href="<?= htmlspecialchars($pdfUrl) ?>">Clique aqui para baixar</a>.
+        </p>
+      </iframe>
+    </div>
+  </div>
+  <?php endif; ?>
+
 </div>
 </section>
 

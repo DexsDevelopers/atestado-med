@@ -230,5 +230,14 @@ function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-// Print document
-function printDoc() { window.print(); }
+// Print document — iOS Safari compatible
+function printDoc() {
+  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  if (isIOS) {
+    // iOS Safari requires a short delay and focus before window.print()
+    window.focus();
+    setTimeout(function () { window.print(); }, 300);
+  } else {
+    window.print();
+  }
+}

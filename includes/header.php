@@ -35,9 +35,8 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php'); ?>
     <div class="nav-links" id="nav-links">
       <?php
       $links = [
-        ['href'=>'index.php',        'page'=>'index',        'label'=>'Início'],
-        ['href'=>'sobre.php',          'page'=>'sobre',        'label'=>'Sobre'],
-        ['href'=>'instituicoes.php',   'page'=>'instituicoes', 'label'=>'Instituições'],
+        ['href'=>'index.php',       'page'=>'index',     'label'=>'Início'],
+        ['href'=>'verificar.php',   'page'=>'verificar', 'label'=>'Verificar Documento'],
       ];
       foreach ($links as $l): ?>
         <a href="<?= $l['href'] ?>" class="nav-link <?= $currentPage === $l['page'] ? 'active' : '' ?>">

@@ -84,6 +84,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: index.php');
         exit;
     }
+
+    if (isset($_POST['excluir_doc']) && !empty($_SESSION['admin'])) {
+        try {
+            $db   = getDB();
+            $stmt = $db->prepare("SELECT arquivo_pdf FROM documentos WHERE id=?");
+            $stmt->execute([(int)$_POST['doc_id']]);
+            $row  = $stmt->fetch();
+            if ($row && $row['arquivo_pdf']) {
+                $pdfPath = dirname(__DIR__) . '/uploads/atestados/' . $row['arquivo_pdf'];
+                if (file_exists($pdfPath)) @unlink($pdfPath);
+            }
+            $db->prepare("DELETE FROM documentos WHERE id=?")->execute([(int)$_POST['doc_id']]);
+        } catch (PDOException $e) {}
+        header('Location: index.php');
+        exit;
+    }
 }
 
 $docs = [];
@@ -385,7 +401,7 @@ tr:hover td{background:#fafbff;}
       <thead>
         <tr>
           <th>Código</th><th>Tipo</th><th>Paciente</th><th>Médico</th>
-          <th>Data</th><th>Status</th><th>QR</th><th>Ver</th><th></th>
+          <th>Data</th><th>Status</th><th>QR</th><th>Ver</th><th>Ações</th>
         </tr>
       </thead>
       <tbody>
@@ -405,13 +421,20 @@ tr:hover td{background:#fafbff;}
               Ver
             </a>
           </td>
-          <td>
+          <td style="white-space:nowrap;display:flex;gap:.35rem;flex-wrap:wrap;">
             <?php if ($d['status'] === 'ativo'): ?>
-            <form method="POST" onsubmit="return confirm('Cancelar este documento?')">
+            <form method="POST" onsubmit="return confirm('Cancelar este documento?')" style="display:inline;">
               <input type="hidden" name="doc_id" value="<?= $d['id'] ?>"/>
               <button type="submit" name="cancelar_doc" class="btn btn-danger" style="font-size:.75rem;padding:.3rem .75rem;">Cancelar</button>
             </form>
             <?php endif; ?>
+            <form method="POST" onsubmit="return confirm('Excluir permanentemente este documento? Esta ação não pode ser desfeita.')" style="display:inline;">
+              <input type="hidden" name="doc_id" value="<?= $d['id'] ?>"/>
+              <button type="submit" name="excluir_doc" class="btn" style="font-size:.75rem;padding:.3rem .75rem;background:#111827;color:#fff;"
+                onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#111827'">
+                🗑 Excluir
+              </button>
+            </form>
           </td>
         </tr>
       <?php endforeach; ?>

@@ -5,7 +5,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php'); ?>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="description" content="Sistema Nacional de Verificação de Documentos Médicos. Verifique atestados e receitas médicas com total segurança." />
   <title><?= htmlspecialchars($pageTitle ?? 'VerificaMed — Sistema Nacional de Verificação') ?></title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />

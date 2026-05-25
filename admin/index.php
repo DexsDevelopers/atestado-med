@@ -635,6 +635,10 @@ function pdfAutoFill(text) {
   var mUnit = t.match(/(?:UNIDADE[^,]{0,60}(?:PRONTO|ATENDIMENTO|UPA)|UPA[^,]{0,60}|Hospital[^,]{0,60}|Clínica[^,]{0,60})/i);
   if (mUnit) { if (setField('unidade', mUnit[0].replace(/\s+/g,' ').trim().substring(0,80))) count++; }
 
+  // Address — "Av./Rua/R. Name, 123 - Bairro, City - ST, CEP" or similar
+  var mEnd = t.match(/(?:Av\.?|Avenida|Rua|R\.|Trav\.?|Travessa|Al\.?|Alameda|Est\.?|Estrada)\s+[^,]{3,60},\s*\d+[^,\n]{0,80}/i);
+  if (mEnd) { if (setField('endereco', mEnd[0].replace(/\s+/g,' ').trim().substring(0,120))) count++; }
+
   // Quadro clínico — apresentou / apresentando / compativel com
   var mQ = t.match(/(?:apresentou|apresentando|compatível com)\s+([^.]{10,300})\.?/i);
   if (mQ) { var qEl=document.getElementById('campo-quadro'); if(qEl&&!qEl.value){qEl.value=mQ[0].trim();qEl.style.background='#fefce8';qEl.style.borderColor='#fbbf24';setTimeout(function(){qEl.style.background='';qEl.style.borderColor='';},4000);count++;} }

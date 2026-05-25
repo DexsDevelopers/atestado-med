@@ -84,9 +84,19 @@ $shareUrl = $resultado ? $protocol . '://' . $_SERVER['HTTP_HOST']
 <section class="section-gray" style="padding:<?= $searched ? '1.5rem' : '3rem' ?> 0 <?= $searched ? '.75rem' : '3rem' ?>;">
 <div style="max-width:640px;margin:0 auto;padding:0 1.5rem;">
 
+  <!-- LOADING OVERLAY -->
+  <div id="verify-loading" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(4px);z-index:9999;flex-direction:column;align-items:center;justify-content:center;gap:1.25rem;">
+    <div style="background:#fff;border-radius:1.25rem;padding:2.5rem 3rem;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25);max-width:320px;">
+      <div style="margin:0 auto 1.25rem;width:52px;height:52px;border:4px solid #e0e7ff;border-top-color:#2563eb;border-radius:50%;animation:vm-spin .8s linear infinite;"></div>
+      <div style="font-size:1rem;font-weight:700;color:#111827;margin-bottom:.4rem;" id="loading-title">Verificando documento…</div>
+      <div style="font-size:.8125rem;color:#6b7280;" id="loading-sub">Consultando base de dados segura</div>
+    </div>
+  </div>
+  <style>@keyframes vm-spin { to { transform: rotate(360deg); } }</style>
+
   <div class="verify-card" style="margin-bottom:1.5rem;">
     <p style="font-size:.9375rem;font-weight:600;color:#111827;margin-bottom:1rem;">Digite o código de verificação</p>
-    <form method="POST" action="verificar.php" id="verify-form" style="display:flex;gap:.75rem;flex-wrap:wrap;">
+    <form method="POST" action="verificar.php" id="verify-form" style="display:flex;gap:.75rem;flex-wrap:wrap;" onsubmit="startVerify(event)">
       <input
         type="text"
         name="codigo"
@@ -97,11 +107,41 @@ $shareUrl = $resultado ? $protocol . '://' . $_SERVER['HTTP_HOST']
         style="flex:1;min-width:200px;font-family:monospace;"
         required
       />
-      <button type="submit" style="display:inline-flex;align-items:center;gap:.5rem;background:#2563eb;color:#fff;font-weight:600;padding:.75rem 1.5rem;border-radius:.625rem;border:none;cursor:pointer;font-size:.9rem;transition:background .15s;white-space:nowrap;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+      <button type="submit" id="verify-btn" style="display:inline-flex;align-items:center;gap:.5rem;background:#2563eb;color:#fff;font-weight:600;padding:.75rem 1.5rem;border-radius:.625rem;border:none;cursor:pointer;font-size:.9rem;transition:background .15s;white-space:nowrap;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
         <svg fill="none" width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         Verificar
       </button>
     </form>
+    <script>
+    function startVerify(e) {
+      e.preventDefault();
+      var form = document.getElementById('verify-form');
+      var overlay = document.getElementById('verify-loading');
+      var title = document.getElementById('loading-title');
+      var sub = document.getElementById('loading-sub');
+      var msgs = [
+        ['Verificando documento…',      'Consultando base de dados segura'],
+        ['Validando assinatura…',        'Conferindo integridade do código'],
+        ['Autenticando informações…',    'Verificando registro do médico'],
+        ['Quase pronto…',               'Finalizando verificação'],
+      ];
+      overlay.style.display = 'flex';
+      var i = 0;
+      var interval = setInterval(function() {
+        i++;
+        if (i < msgs.length) {
+          title.textContent = msgs[i][0];
+          sub.textContent   = msgs[i][1];
+        } else {
+          clearInterval(interval);
+        }
+      }, 500);
+      setTimeout(function() {
+        clearInterval(interval);
+        form.submit();
+      }, 2200);
+    }
+    </script>
 
     <!-- QR SCANNER BUTTON -->
     <div style="text-align:center;margin-top:1.25rem;">

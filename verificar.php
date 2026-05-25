@@ -1,16 +1,28 @@
 <?php
 $pageTitle = 'Verificar Documento — VerificaMed';
+session_start();
 require_once 'config/db.php';
 
 $codigo    = '';
 $resultado = null;
 $searched  = false;
 $dbError   = false;
+$rateLimited = false;
+
+// Rate limiting: max 30 verifications per 60 seconds per session
+$_SESSION['vm_attempts'] = array_values(array_filter(
+    $_SESSION['vm_attempts'] ?? [],
+    fn($t) => time() - $t < 60
+));
+if (count($_SESSION['vm_attempts']) >= 30) {
+    $rateLimited = true;
+}
 
 $codigoGet = strtoupper(trim($_GET['codigo'] ?? ''));
-if ($codigoGet) {
+if ($codigoGet && !$rateLimited) {
     $codigo   = $codigoGet;
     $searched = true;
+    $_SESSION['vm_attempts'][] = time();
     try {
         $db   = getDB();
         $stmt = $db->prepare("SELECT * FROM documentos WHERE codigo = ? AND status = 'ativo' LIMIT 1");
@@ -19,10 +31,11 @@ if ($codigoGet) {
     } catch (PDOException $e) { $dbError = true; }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$rateLimited) {
     $codigo   = strtoupper(trim($_POST['codigo'] ?? ''));
     $searched = true;
     if ($codigo) {
+        $_SESSION['vm_attempts'][] = time();
         try {
             $db   = getDB();
             $stmt = $db->prepare("SELECT * FROM documentos WHERE codigo = ? AND status = 'ativo' LIMIT 1");
@@ -119,11 +132,27 @@ $shareUrl = $resultado ? $protocol . '://' . $_SERVER['HTTP_HOST']
 
   </div>
 
+  <?php if ($rateLimited): ?>
+  <div style="background:#fff;border:2px solid #dc2626;border-radius:1.25rem;padding:1.25rem 1.5rem;margin-top:1.25rem;display:flex;align-items:center;gap:.75rem;" class="anim-fadeup">
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#dc2626" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    <p style="color:#dc2626;font-weight:600;margin:0;font-size:.875rem;">Muitas tentativas. Aguarde alguns segundos antes de tentar novamente.</p>
+  </div>
+  <?php endif; ?>
+
   <?php if ($dbError): ?>
   <div style="background:#fff;border:2px solid #f59e0b;border-radius:1.25rem;padding:1.5rem;margin-top:1.5rem;" class="anim-fadeup">
     <p style="color:#92400e;font-weight:600;">⚠️ Erro ao conectar ao banco de dados. Verifique as configurações.</p>
   </div>
   <?php endif; ?>
+
+  <!-- AVISO LEGAL -->
+  <div style="margin-top:1.5rem;padding:.875rem 1.25rem;background:#f8faff;border:1px solid #e0e7ff;border-radius:.75rem;display:flex;align-items:flex-start;gap:.6rem;">
+    <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="#6366f1" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <p style="font-size:.75rem;color:#6b7280;margin:0;line-height:1.6;">
+      Este sistema verifica a autenticidade de documentos médicos nos termos da <strong>Lei 14.063/2020</strong>. O resultado não substitui a análise do documento original pelo profissional responsável. Dados tratados em conformidade com a <strong>LGPD (Lei 13.709/2018)</strong>.
+      <a href="privacidade.php" style="color:#4f46e5;">Política de Privacidade</a> &bull; <a href="termos.php" style="color:#4f46e5;">Termos de Uso</a>
+    </p>
+  </div>
 
 </div>
 </section>

@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /config/
+Disallow: /uploads/
+Disallow: /setup.php
+Disallow: /atestado.php
+Disallow: /receita.php
+Allow: /
+
+Sitemap: https://verificamed.website/sitemap.xml

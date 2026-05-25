@@ -1,11 +1,42 @@
-Options -MultiViews
+Options -MultiViews -Indexes
 RewriteEngine On
 
-# Clean URLs: /atestado → /atestado.php
+# ── HTTPS ────────────────────────────────────────────────────
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP_HOST} !^localhost [NC]
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ── Clean URLs ───────────────────────────────────────────────
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}.php -f
 RewriteRule ^([^\.]+)$ $1.php [NC,L]
 
-# Default page
 DirectoryIndex index.php
+
+# ── Proteger arquivos sensíveis ──────────────────────────────
+<FilesMatch "(^\.env|\.git|\.htpasswd|setup\.php|crop-logo\.ps1|package\.json|composer\.(json|lock)|tailwind\.config\.js|vite\.config\.js|postcss\.config\.js)$">
+  Require all denied
+</FilesMatch>
+
+# ── Bloquear acesso direto a config/ ────────────────────────
+RedirectMatch 403 ^/config/
+
+# ── Security Headers ─────────────────────────────────────────
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-XSS-Protection "1; mode=block"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
+
+# ── Cache estático ───────────────────────────────────────────
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/png  "access plus 1 month"
+  ExpiresByType image/jpeg "access plus 1 month"
+  ExpiresByType text/css   "access plus 1 week"
+  ExpiresByType application/javascript "access plus 1 week"
+</IfModule>

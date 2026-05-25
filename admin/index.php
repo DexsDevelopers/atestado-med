@@ -239,14 +239,88 @@ tr:hover td{background:#fafbff;}
           <label>Data do atendimento *</label>
           <input type="date" name="data_atend" value="<?= $today ?>" required/>
         </div>
-        <div>
-          <label>CID</label>
-          <input name="cid" placeholder="ex: J11"/>
-        </div>
       </div>
+      <!-- QUADRO PRE-DEFINIDO -->
       <div style="margin-bottom:1rem;">
-        <label>Quadro clínico / sintomas *</label>
-        <textarea name="quadro" rows="2" style="resize:vertical;" required></textarea>
+        <label>Quadro clínico pré-definido <span style="font-weight:400;color:#9ca3af;">(opcional — preenche os campos abaixo automaticamente)</span></label>
+        <select id="sel-quadro" onchange="preencherQuadro(this.value)" style="width:100%;border:1px solid #d1daf0;border-radius:.5rem;padding:.625rem .875rem;font-size:.875rem;background:#f8faff;color:#374151;">
+          <option value="">— Selecione um quadro clínico —</option>
+          <optgroup label="🤷 Infectológico / Respiratório">
+            <option value="gripal">Síndrome gripal (Gripe) — J11</option>
+            <option value="resfriado">Resfriado comum (Rinofaringite) — J00</option>
+            <option value="faringite">Faringite aguda — J02.9</option>
+            <option value="amigdalite">Amigdalite aguda — J03.9</option>
+            <option value="sinusite">Sinusite aguda — J01.9</option>
+            <option value="bronquite">Bronquite aguda — J20.9</option>
+            <option value="pneumonia">Pneumonia — J18.9</option>
+            <option value="covid">COVID-19 — U07.1</option>
+            <option value="otite">Otite média aguda — H66.0</option>
+            <option value="conjuntivite">Conjuntivite aguda — H10.9</option>
+          </optgroup>
+          <optgroup label="🪴 Gastrointestinal">
+            <option value="gastroenterite">Gastroenterite aguda — A09</option>
+            <option value="gastrite">Gastrite aguda — K29.1</option>
+            <option value="dor_abd">Dor abdominal — R10.4</option>
+            <option value="diarreia">Diarréia aguda — A09</option>
+            <option value="nausea">Náusea e vômito — R11</option>
+            <option value="colica">Cólica abdominal — R10.4</option>
+          </optgroup>
+          <optgroup label="🦴 Osteomuscular / Dor">
+            <option value="lombalgia">Lombalgia (dor lombar) — M54.5</option>
+            <option value="dorsalgia">Dorsalgia — M54.9</option>
+            <option value="cervicalgia">Cervicalgia — M54.2</option>
+            <option value="tendinite">Tendinite — M77.9</option>
+            <option value="contusao">Contusão / trauma — T14.0</option>
+            <option value="cefaleia">Cefaleia tensional — R51</option>
+            <option value="enxaqueca">Enxaqueca — G43.9</option>
+          </optgroup>
+          <optgroup label="🧠 Neurológico / Psiquiátrico">
+            <option value="ansiedade">Transtorno de ansiedade — F41.9</option>
+            <option value="depressao">Episódio depressivo — F32.9</option>
+            <option value="insonia">Insônia — G47.0</option>
+            <option value="tontura">Tontura e vertigem — R42</option>
+            <option value="sincope">Síncope e lipotímia — R55</option>
+          </optgroup>
+          <optgroup label="❤️ Cardiovascular / Metabólico">
+            <option value="has">Hipertensão arterial descompensada — I10</option>
+            <option value="dm">Diabetes mellitus descompensada — E11.9</option>
+            <option value="palpitacao">Palpitções / taquicardia — R00.0</option>
+          </optgroup>
+          <optgroup label="🫁 Urológico / Ginecológico">
+            <option value="itu">Infecção do trato urinário — N39.0</option>
+            <option value="colica_renal">Cólica renal — N23</option>
+            <option value="dismenorreia">Dismenorreia — N94.6</option>
+          </optgroup>
+          <optgroup label="🦱 Dermatológico">
+            <option value="dermatite">Dermatite — L30.9</option>
+            <option value="urticaria">Urticária — L50.9</option>
+            <option value="herpes">Herpes zoster — B02.9</option>
+            <option value="varicela">Varicela (Catapora) — B01.9</option>
+          </optgroup>
+          <optgroup label="🔍 Geral / Outros">
+            <option value="mal_estar">Mal-estar geral e febre — R53</option>
+            <option value="febre">Febre sem causa determinada — R50.9</option>
+            <option value="astenia">Astenia / fadiga — R53.1</option>
+            <option value="hipoglicemia">Hipoglicemia — E16.0</option>
+            <option value="alergica">Reação alérgica — T78.4</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="grid2" style="margin-bottom:1rem;">
+        <div>
+          <label>Quadro clínico / sintomas *</label>
+          <textarea id="campo-quadro" name="quadro" rows="3" style="resize:vertical;" required></textarea>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div>
+            <label>CID</label>
+            <input id="campo-cid" name="cid" placeholder="ex: J11"/>
+          </div>
+          <div>
+            <label>Recomendações *</label>
+            <textarea id="campo-rec" name="recomendacoes" rows="3" style="resize:vertical;" required></textarea>
+          </div>
+        </div>
       </div>
       <div class="grid3" style="margin-bottom:1rem;">
         <div>
@@ -265,15 +339,9 @@ tr:hover td{background:#fafbff;}
           <input name="cidade" placeholder="ex: Teresina"/>
         </div>
       </div>
-      <div class="grid2" style="margin-bottom:1rem;">
-        <div>
-          <label>Recomendações *</label>
-          <textarea name="recomendacoes" rows="2" style="resize:vertical;" required></textarea>
-        </div>
-        <div>
-          <label>Observações</label>
-          <textarea name="observacoes" rows="2" style="resize:vertical;"></textarea>
-        </div>
+      <div style="margin-bottom:1rem;">
+        <label>Observações</label>
+        <textarea name="observacoes" rows="2" style="resize:vertical;"></textarea>
       </div>
       <button type="submit" name="novo_doc" class="btn btn-primary">
         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
@@ -340,6 +408,58 @@ tr:hover td{background:#fafbff;}
 </div>
 
 <script>
+var QUADROS = {
+  gripal:       { q:'síndrome gripal, acompanhada de febre, cefaleia, mialgia, dores no corpo e mal-estar geral', c:'J11', r:'repouso, hidratação adequada, uso de antipiréticos e acompanhamento dos sintomas para adequada recuperação do quadro clínico' },
+  resfriado:    { q:'rinofaringite aguda, com congestão nasal, coriza, espirros e leve mal-estar', c:'J00', r:'repouso, hidratação, uso de descongestionante nasal e lavagem nasal com soro fisiológico' },
+  faringite:    { q:'faringite aguda com odinofagia, hiperemia de orofaringe, febre e mal-estar', c:'J02.9', r:'repouso, hidratação, uso de analgésico/antipirético conforme prescrição e antibioticoterapia se indicado' },
+  amigdalite:   { q:'amigdalite aguda com odinofagia intensa, febre, hiperemia e exsudato tonsilar', c:'J03.9', r:'repouso, hidratação, dieta pastosa e antibioticoterapia conforme prescrição médica' },
+  sinusite:     { q:'sinusite aguda com cefaleia, pressão facial, congestão nasal e secreção purulenta', c:'J01.9', r:'repouso, hidratação, lavagem nasal, uso de descongestionante e antibioticoterapia conforme prescrição' },
+  bronquite:    { q:'bronquite aguda com tosse produtiva, dispneia leve, congestão das vias aéreas superiores e mal-estar', c:'J20.9', r:'repouso, hidratação, uso de broncodilatador e expectorante conforme prescrição médica' },
+  pneumonia:    { q:'pneumonia com febre alta, tosse produtiva, dispneia e dor torácica', c:'J18.9', r:'repouso absoluto, hidratação, antibioticoterapia e acompanhamento médico rigoroso' },
+  covid:        { q:'infecção pelo SARS-CoV-2 (COVID-19) com febre, tosse seca, dispneia, anosmia e mal-estar geral', c:'U07.1', r:'isolamento doméstico, repouso, hidratação, monitoramento da saturação e acompanhamento médico' },
+  otite:        { q:'otite média aguda com otalgia, febre, hiperemia de membrana timpânica e hipoacusia', c:'H66.0', r:'repouso, analgésico/antipirético e antibioticoterapia conforme prescrição médica' },
+  conjuntivite: { q:'conjuntivite aguda com hiperemia, secreção ocular, lacrimejamento e fotofobia', c:'H10.9', r:'repouso, higiene ocular com soro fisiológico, colírio conforme prescrição e evitar contato com outras pessoas' },
+  gastroenterite:{ q:'gastroenterite aguda com náuseas, vômitos, diarreia e cólicas abdominais', c:'A09', r:'repouso, hidratação oral com solução de reidratação, dieta leve e uso de medicamentos conforme prescrição' },
+  gastrite:     { q:'gastrite aguda com epigastralgia, náuseas, vômitos e desconforto abdominal', c:'K29.1', r:'repouso, dieta leve e sem irritantes gástricos, uso de antiemético e protetor gástrico conforme prescrição' },
+  dor_abd:      { q:'dor abdominal aguda de moderada intensidade, com desconforto difuso e náuseas', c:'R10.4', r:'repouso, dieta leve, hidratação e uso de analgésico conforme prescrição médica' },
+  diarreia:     { q:'diarreia aguda com evacuações líquidas frequentes, cólicas e indisposição', c:'A09', r:'repouso, reidratação oral, dieta BRAT (banana, arroz, maçã e torrada) e medicamentos conforme prescrição' },
+  nausea:       { q:'náuseas e vômitos recorrentes com indisposição geral e prostração', c:'R11', r:'repouso, hidratação fracionada, dieta leve e uso de antiemético conforme prescrição médica' },
+  colica:       { q:'cólica abdominal aguda com dor em cólica de moderada intensidade e distenção abdominal', c:'R10.4', r:'repouso, hidratação, dieta leve, antiespasmódico e acompanhamento médico' },
+  lombalgia:    { q:'lombalgia aguda com dor intensa na região lombar, limitando movimentação e atividades físicas', c:'M54.5', r:'repouso relativo, uso de analgésico e anti-inflamatório conforme prescrição, aplicação de calor local e fisioterapia posterior' },
+  dorsalgia:    { q:'dorsalgia com dor dorsal de intensidade moderada, mialgia paravertebral e limitação de amplitude de movimento', c:'M54.9', r:'repouso relativo, anti-inflamatório e miorrelaxante conforme prescrição médica' },
+  cervicalgia:  { q:'cervicalgia com dor cervical intensa, rigidez muscular e limitação da mobilidade do pescoço', c:'M54.2', r:'repouso, anti-inflamatório, miorrelaxante conforme prescrição e fisioterapia posterior' },
+  tendinite:    { q:'tendinite com dor, edema e limitação funcional na região afetada', c:'M77.9', r:'repouso do membro afetado, gelo local, anti-inflamatório conforme prescrição e imobilização se necessário' },
+  contusao:     { q:'contusão com dor local, edema e limitação funcional após trauma', c:'T14.0', r:'repouso, aplicação de gelo nas primeiras 48 horas, elevação do membro e analgésico conforme prescrição' },
+  cefaleia:     { q:'cefaleia tensional intensa com dor difusa, pulsátil, fotofobia e náuseas', c:'R51', r:'repouso em ambiente silencioso e com pouca luz, hidratação e analgésico conforme prescrição médica' },
+  enxaqueca:    { q:'crise de enxaqueca com cefaleia intensa unilateral, pulsátil, acompanhada de náuseas, vômito e fotofobia', c:'G43.9', r:'repouso em ambiente escuro e silencioso, hidratação e medicação específica conforme prescrição' },
+  ansiedade:    { q:'transtorno de ansiedade com sintomas de agitação, taquicardia, dispneia, insônia e dificuldade de concentração', c:'F41.9', r:'repouso, afastamento de situações estressoras, uso de medicação conforme prescrição e acompanhamento psiquiátrico' },
+  depressao:    { q:'episódio depressivo com humor deprimido, anedonia, fadiga, insônia e dificuldade de concentração', c:'F32.9', r:'repouso, afastamento de atividades laborais, acompanhamento psiquiátrico e psicológico e uso de medicação conforme prescrição' },
+  insonia:      { q:'insônia persistente com dificuldade de indução e manutenção do sono, sonolência diurna e irritação', c:'G47.0', r:'repouso, higiene do sono, evitar cafeína e telas à noite, medicação conforme prescrição médica' },
+  tontura:      { q:'tontura e vertigem com desequilíbrio, náuseas e instabilidade postural', c:'R42', r:'repouso, evitar movimentos brúscos, hidratação, antivertiginoso conforme prescrição' },
+  sincope:      { q:'síncope com perda súbita da consciência de curta duração, precedida de tontura e mal-estar', c:'R55', r:'repouso absoluto, monitoramento de sinais vitais, hidratação e avaliação cardiológica' },
+  has:          { q:'hipertensão arterial sistêmica descompensada com cefaléia occipital, tontura, epistáxis e mal-estar', c:'I10', r:'repouso, redução do estíeé, dieta hipossódica, uso regular da medicação anti-hipertensiva conforme prescrição' },
+  dm:           { q:'diabetes mellitus descompensada com hiperglicemia, astenia, poliúria, polidipsia e mal-estar', c:'E11.9', r:'repouso, monitoramento da glicemia, ajuste da medicação conforme prescrição e dieta appropriada' },
+  palpitacao:   { q:'palpitções com taquicardia, desconforto torácico e ansieda', c:'R00.0', r:'repouso, evitar estimulantes (cafeína, álcool), monitoração de sinais vitais e avaliação cardiológica' },
+  itu:          { q:'infecção do trato urinário com disúria, polaciúria, urgência miccional e desconforto suprapúbico', c:'N39.0', r:'repouso, hidratação abundante, antibioticoterapia conforme prescrição e retorno em caso de piora' },
+  colica_renal: { q:'cólica renal com dor lombar intensa em cólica, irradiada para virilha, com náuseas e agitação', c:'N23', r:'repouso, hidratação, analgésico e antiespasmódico conforme prescrição médica' },
+  dismenorreia: { q:'dismenorreia com dor pélvica intensa de cólica, associada ao ciclo menstrual, acompanhada de náuseas e mal-estar', c:'N94.6', r:'repouso, compressa morna na região pélvica, anti-inflamatório e antiespasmódico conforme prescrição' },
+  dermatite:    { q:'dermatite com lesões eritematosas, prurido intenso e descamação na região afetada', c:'L30.9', r:'repouso, evitar agentes irritantes, hidratante e corticoide tópico conforme prescrição médica' },
+  urticaria:    { q:'urticária aguda com pápulas eritematosas, pruriginosas e disseminadas pelo corpo', c:'L50.9', r:'repouso, anti-histamínico conforme prescrição, evitar calor e agentes desencadeantes' },
+  herpes:       { q:'herpes zoster com lesões vesiculares dolorosas em distribuição dermatômica, acompanhadas de neuralgia intensa', c:'B02.9', r:'repouso, antiviral conforme prescrição, analgésico e curativo das lesões' },
+  varicela:     { q:'varicela (catapora) com lesões vesiculares pruriginosas disseminadas, febre e mal-estar geral', c:'B01.9', r:'repouso, isolamento domiciliar até crostação total das lesões, anti-histamínico e antiviral conforme prescrição' },
+  mal_estar:    { q:'mal-estar geral, febre e prostração, sem diagnóstico específico definido no momento do atendimento', c:'R53', r:'repouso, hidratação, uso de antipirético, monitoramento dos sintomas e retorno em caso de piora' },
+  febre:        { q:'febre sem causa determinada, acompanhada de calafrios, sudorese e mal-estar', c:'R50.9', r:'repouso, hidratação, uso de antipirético (dipirona/paracetamol) conforme prescrição e retorno se persistir' },
+  astenia:      { q:'astenia e fadiga acentuada com limitação significativa das atividades habituais', c:'R53.1', r:'repouso, hidratação, dieta equilibrada, suplementação se indicada e acompanhamento médico' },
+  hipoglicemia: { q:'hipoglicemia com sudorese fria, tremores, tonturas, palpitações e rebaixamento do nível de consciência', c:'E16.0', r:'repouso, monitoramento da glicemia, refeições regulares e ajuste de medicação conforme prescrição' },
+  alergica:     { q:'reação alérgica com urticária, prurido, edema e mal-estar após exposição a substância alergênica', c:'T78.4', r:'repouso, anti-histamínico e corticoide conforme prescrição, afastar o agente causador e observação clínica' },
+};
+function preencherQuadro(key) {
+  if (!key || !QUADROS[key]) return;
+  var d = QUADROS[key];
+  document.getElementById('campo-quadro').value = d.q;
+  document.getElementById('campo-cid').value    = d.c;
+  document.getElementById('campo-rec').value    = d.r;
+}
 var currentCode = '';
 function showQR(code) {
   currentCode = code;

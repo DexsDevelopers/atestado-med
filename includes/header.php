@@ -31,7 +31,12 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php'); ?>
 <nav class="site-nav no-print" style="position:sticky;top:0;z-index:50;">
   <div class="nav-inner">
     <a href="index.php" class="nav-brand">
-      VerificaMed
+      <span class="nav-logo-icon">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+        </svg>
+      </span>
+      <span class="nav-brand-text">Verifica<span class="nav-brand-accent">Med</span></span>
       <span class="nav-brand-sep">|</span>
       <span class="nav-brand-sub">Sistema Nacional de Verificação</span>
     </a>

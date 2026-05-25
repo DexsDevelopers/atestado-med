@@ -146,9 +146,7 @@ $shareUrl = $resultado ? $protocol . '://' . $_SERVER['HTTP_HOST']
 
     <!-- QR SCANNER BUTTON -->
     <div style="text-align:center;margin-top:1.25rem;">
-      <button type="button" id="btn-scan" onclick="toggleScanner()"
-        style="display:inline-flex;align-items:center;gap:.5rem;background:#f0f4ff;color:#2563eb;font-weight:600;font-size:.875rem;padding:.625rem 1.25rem;border-radius:.625rem;border:1.5px solid #c7d7fd;cursor:pointer;transition:background .15s;"
-        onmouseover="this.style.background='#dce8ff'" onmouseout="this.style.background='#f0f4ff'">
+      <button type="button" id="btn-scan" onclick="toggleScanner()" class="btn-qr-scan">
         <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
           <rect x="3" y="14" width="7" height="7" rx="1"/>

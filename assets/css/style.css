@@ -538,3 +538,153 @@ body > main { animation:page-in .4s cubic-bezier(.22,1,.36,1) both; }
 
 /* Announcement bar no print */
 @media print { .announce-bar, #scroll-progress { display:none !important; } }
+
+/* ══ VISUAL REDESIGN ══════════════════════════════════════════════════════ */
+
+/* ── Nav logo icon ──────────────────────────────────────────────────────── */
+.nav-logo-icon {
+  width:34px; height:34px; border-radius:.625rem; flex-shrink:0;
+  background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.25);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+  transition:background .2s, transform .2s;
+}
+.nav-brand:hover .nav-logo-icon { background:rgba(255,255,255,.25); transform:scale(1.06); }
+.nav-brand-text { font-size:1.125rem; font-weight:800; letter-spacing:-.02em; }
+.nav-brand-accent { color:#93c5fd; }
+.nav-brand-sub { font-size:.72rem; color:rgba(255,255,255,.6); font-weight:400; }
+
+/* ── Nav redesign ───────────────────────────────────────────────────────── */
+.site-nav {
+  background:linear-gradient(90deg,#0f2258,#1e3a8a,#1d4ed8) !important;
+  border-bottom:1px solid rgba(255,255,255,.08) !important;
+  box-shadow:0 4px 24px rgba(0,0,0,.25) !important;
+}
+.nav-inner { height:68px !important; }
+.nav-link {
+  font-size:.8125rem !important; font-weight:500 !important;
+  padding:.5rem 1.1rem !important; border-radius:.625rem !important;
+  letter-spacing:.01em;
+}
+.nav-link:hover { background:rgba(255,255,255,.1) !important; color:#fff !important; }
+.nav-link.active {
+  background:rgba(255,255,255,.18) !important;
+  color:#fff !important;
+  font-weight:600 !important;
+  border:1px solid rgba(255,255,255,.25) !important;
+}
+.nav-link.active::after { display:none !important; }
+
+/* ── Hero refinement ────────────────────────────────────────────────────── */
+.hero-section {
+  background:linear-gradient(135deg,#0a1628,#0f2258,#1d4ed8,#2563eb,#1d4ed8) !important;
+  background-size:400% 400% !important;
+  padding:5.5rem 1.5rem 4.5rem !important;
+}
+.hero-section::before {
+  background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px) !important;
+  background-size:28px 28px !important;
+}
+.hero-h1 {
+  font-size:3rem !important; font-weight:900 !important;
+  letter-spacing:-.035em !important; line-height:1.1 !important;
+}
+@media(max-width:640px){ .hero-h1{font-size:2.1rem !important;} }
+.hero-sub { font-size:1.0625rem !important; max-width:500px !important; }
+
+/* ── Verify card redesign ───────────────────────────────────────────────── */
+.verify-card {
+  background:#fff !important;
+  border:none !important;
+  border-radius:1.5rem !important;
+  padding:2.75rem 2.5rem !important;
+  box-shadow:0 20px 60px rgba(15,34,90,.14), 0 4px 16px rgba(15,34,90,.06) !important;
+  animation:fadeInUp .6s .1s cubic-bezier(.22,1,.36,1) both !important;
+}
+.verify-card:focus-within {
+  box-shadow:0 20px 60px rgba(15,34,90,.18), 0 0 0 3px rgba(37,99,235,.2) !important;
+  transform:translateY(-2px) !important;
+}
+.verify-card > p, .verify-card label {
+  font-size:.9375rem; font-weight:700; color:#0f172a; margin-bottom:1rem;
+  letter-spacing:-.01em;
+}
+
+/* ── Input redesign ─────────────────────────────────────────────────────── */
+.input-field {
+  background:#f8faff !important;
+  border:1.5px solid #dde4f5 !important;
+  border-radius:.75rem !important;
+  padding:.9rem 1.1rem !important;
+  font-size:.9375rem !important; font-weight:500 !important;
+  color:#0f172a !important; letter-spacing:.04em;
+  height:52px;
+}
+.input-field:focus {
+  background:#fff !important;
+  border-color:#2563eb !important;
+  box-shadow:0 0 0 4px rgba(37,99,235,.1) !important;
+}
+
+/* ── Submit verify button (inside verify-card) ──────────────────────────── */
+.verify-card button[type="submit"],
+.verify-card .btn-scan-submit {
+  background:linear-gradient(135deg,#2563eb,#1d4ed8) !important;
+  color:#fff !important; border:none !important;
+  font-weight:600 !important; font-size:.9rem !important;
+  padding:.85rem 1.5rem !important; border-radius:.75rem !important;
+  cursor:pointer; transition:box-shadow .2s, transform .2s !important;
+  box-shadow:0 4px 14px rgba(37,99,235,.4) !important;
+  white-space:nowrap;
+}
+.verify-card button[type="submit"]:hover {
+  box-shadow:0 6px 20px rgba(37,99,235,.5) !important;
+  transform:translateY(-1px) !important;
+}
+
+/* ── QR scan button ─────────────────────────────────────────────────────── */
+.btn-qr-scan {
+  display:inline-flex !important; align-items:center !important; gap:.5rem !important;
+  background:transparent !important;
+  border:1.5px solid #dde4f5 !important;
+  color:#374151 !important; font-size:.8375rem !important; font-weight:500 !important;
+  padding:.65rem 1.25rem !important; border-radius:.75rem !important;
+  cursor:pointer; transition:border-color .2s, background .2s, color .2s !important;
+  letter-spacing:.005em;
+}
+.btn-qr-scan:hover {
+  border-color:#93c5fd !important;
+  background:#eff6ff !important;
+  color:#1d4ed8 !important;
+}
+
+/* ── Section gray upgrade ───────────────────────────────────────────────── */
+.section-gray { background:linear-gradient(180deg,#f0f5ff,#f8faff) !important; }
+
+/* ── Doc card upgrade ───────────────────────────────────────────────────── */
+.doc-card {
+  border-radius:1.5rem !important;
+  box-shadow:0 8px 40px rgba(15,34,90,.1), 0 1px 4px rgba(0,0,0,.04) !important;
+  border:none !important;
+}
+
+/* ── Feature cards ──────────────────────────────────────────────────────── */
+.feature-card { border-radius:1.25rem !important; border-color:#edf2ff !important; }
+.feature-icon { border-radius:1rem !important; width:3.5rem !important; height:3.5rem !important; }
+
+/* ── Footer upgrade ─────────────────────────────────────────────────────── */
+.site-footer { background:linear-gradient(135deg,#0a1628,#0f2258) !important; }
+
+/* ── Typography polish ──────────────────────────────────────────────────── */
+.section-title { letter-spacing:-.025em !important; }
+h1,h2,h3 { letter-spacing:-.02em; }
+
+/* ── Mobile nav upgrade ─────────────────────────────────────────────────── */
+@media(max-width:768px){
+  .nav-links.open {
+    background:linear-gradient(180deg,#1e3a8a,#1d4ed8) !important;
+    border-top:1px solid rgba(255,255,255,.08);
+    box-shadow:0 8px 24px rgba(0,0,0,.2);
+    border-radius:0 0 1rem 1rem;
+  }
+}

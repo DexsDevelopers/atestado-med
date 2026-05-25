@@ -584,10 +584,11 @@ function pdfAutoFill(text) {
   var count = 0;
   var t = text.replace(/\s+/g, ' ');
 
-  // Patient + treatment
-  var mPat = t.match(/atesto que o\([ao]\)\s*(Sr\.|Sra\.|Dr\.|Dra\.)\s+([A-ZÁÉÍÓÚÃÕÂÊÔÀÇÜ][^,\n]{3,50})/i);
+  // Patient + treatment — handles "atesto que o(a)", "declaro...que o", "paciente:"
+  var mPat = t.match(/(?:atesto que o\([ao]\)|que o|que a|paciente[:\s])\s*(Sr\.|Sra\.|Dr\.|Dra\.)?\s*([A-ZÁÉÍÓÚÃÕÂÊÔÀÇÜ][A-Za-záéíóúãõâêôàçü]+(?:\s+[A-Za-záéíóúãõâêôàçü]+){1,5})/i);
   if (mPat) {
-    if (setField('tratamento', mPat[1].trim())) count++;
+    var trat = mPat[1] ? mPat[1].trim() : 'Sr.';
+    if (setField('tratamento', trat)) count++;
     if (setField('paciente',   mPat[2].trim())) count++;
   }
 
@@ -630,13 +631,18 @@ function pdfAutoFill(text) {
   var mCid = t.match(/([A-ZÁÉÍÓÚÃÕÂÊÔÀÇÜ][a-záéíóúãõâêôàç]+(?:\s+[A-Za-záéíóúãõâêôàç]+){0,3})\s*[-,]\s*(?:AC|AL|AM|AP|BA|CE|DF|ES|GO|MA|MG|MS|MT|PA|PB|PE|PI|PR|RJ|RN|RO|RR|RS|SC|SE|SP|TO)\b[\s,]*\d{2}/);
   if (mCid) { if (setField('cidade', mCid[1].trim())) count++; }
 
-  // Unit name (first non-empty substantial line, likely the hospital name)
-  var mUnit = t.match(/^([A-ZÁÉÍÓÚÃÕÂÊÔÀÇÜ][^\n]{10,60}UPA|[^\n]{10,60}Hospital|[^\n]{10,60}Clínica|[^\n]{10,60}Pronto)/im);
-  if (mUnit) { if (setField('unidade', mUnit[1].trim())) count++; }
+  // Unit name
+  var mUnit = t.match(/(?:UNIDADE[^,]{0,60}(?:PRONTO|ATENDIMENTO|UPA)|UPA[^,]{0,60}|Hospital[^,]{0,60}|Clínica[^,]{0,60})/i);
+  if (mUnit) { if (setField('unidade', mUnit[0].replace(/\s+/g,' ').trim().substring(0,80))) count++; }
 
-  // Quadro clínico
-  var mQ = t.match(/(?:apresentou|apresenta)\s+([^.]+\.)/i);
-  if (mQ) { var el=document.getElementById('campo-quadro'); if(el&&!el.value){el.value=mQ[1].trim();el.style.background='#fefce8';el.style.borderColor='#fbbf24';setTimeout(function(){el.style.background='';el.style.borderColor='';},4000);count++;} }
+  // Quadro clínico — apresentou / apresentando / compativel com
+  var mQ = t.match(/(?:apresentou|apresentando|compatível com)\s+([^.]{10,300})\.?/i);
+  if (mQ) { var qEl=document.getElementById('campo-quadro'); if(qEl&&!qEl.value){qEl.value=mQ[0].trim();qEl.style.background='#fefce8';qEl.style.borderColor='#fbbf24';setTimeout(function(){qEl.style.background='';qEl.style.borderColor='';},4000);count++;} }
+
+  // Recomendações
+  var mRec = t.match(/(?:recomendado|recomenda-se|recomendamos|orienta-se|prescrito)[:\s]+([^.]{10,300})\.?/i);
+  if (!mRec) mRec = t.match(/sendo recomendado\s+([^.]{10,300})/i);
+  if (mRec) { var rEl=document.getElementById('campo-rec'); if(rEl&&!rEl.value){rEl.value=mRec[1]?mRec[1].trim():mRec[0].trim();rEl.style.background='#fefce8';rEl.style.borderColor='#fbbf24';setTimeout(function(){rEl.style.background='';rEl.style.borderColor='';},4000);count++;} }
 
   return count;
 }

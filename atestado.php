@@ -155,12 +155,12 @@ $_sigSrc  = file_exists($_sigPath)
         <!-- DIREITA: Assinatura / Nome / CRM -->
         <td style="width:46%;text-align:center;vertical-align:bottom;">
           <!-- Imagem de assinatura -->
-          <div style="height:5rem;display:flex;align-items:flex-end;justify-content:center;padding-bottom:0;">
+          <div style="height:6rem;display:flex;align-items:flex-end;justify-content:center;padding-bottom:0;">
             <?php if ($_sigSrc): ?>
             <img src="<?= $_sigSrc ?>" alt="Assinatura"
-              style="max-height:85px;max-width:210px;display:block;margin:0 auto;">
+              style="width:90%;max-width:240px;height:auto;display:block;margin:0 auto;">
             <?php else: ?>
-            <div style="height:4rem;"></div>
+            <div style="height:5rem;"></div>
             <?php endif; ?>
           </div>
           <!-- Linha -->

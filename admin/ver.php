@@ -132,10 +132,10 @@ body{background:#e8edf5;font-family:Arial,sans-serif;padding:2rem 1rem;}
       </td>
       <td style="width:8%;"></td>
       <td style="width:46%;text-align:center;vertical-align:bottom;">
-        <div style="height:5rem;display:flex;align-items:flex-end;justify-content:center;">
+        <div style="height:6rem;display:flex;align-items:flex-end;justify-content:center;">
           <?php if ($_sigSrc): ?>
-          <img src="<?= $_sigSrc ?>" alt="Assinatura" style="max-height:85px;max-width:210px;display:block;margin:0 auto;">
-          <?php else: ?><div style="height:4rem;"></div><?php endif; ?>
+          <img src="<?= $_sigSrc ?>" alt="Assinatura" style="width:90%;max-width:240px;height:auto;display:block;margin:0 auto;">
+          <?php else: ?><div style="height:5rem;"></div><?php endif; ?>
         </div>
         <div style="border-top:1.5px solid #111;padding-top:.35rem;">
           <div style="font-size:10.5pt;font-weight:600;font-family:Arial,sans-serif;"><?= htmlspecialchars($doc['medico']) ?></div>

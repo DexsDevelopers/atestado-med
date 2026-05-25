@@ -83,6 +83,9 @@ if (!empty($_SESSION['admin'])) {
 }
 
 $today = date('Y-m-d');
+$_proto   = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$_root    = rtrim(dirname(dirname($_SERVER['SCRIPT_NAME'])), '/\\');
+$_baseUrl = $_proto . '://' . $_SERVER['HTTP_HOST'] . $_root;
 ?><!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -465,16 +468,18 @@ function preencherQuadro(key) {
   document.getElementById('campo-cid').value    = d.c;
   document.getElementById('campo-rec').value    = d.r;
 }
+var VERIFY_BASE = '<?= htmlspecialchars($_baseUrl, ENT_QUOTES) ?>';
 var currentCode = '';
 var _qrInstance = null;
 function showQR(code) {
   currentCode = code;
+  var url = VERIFY_BASE + '/verificar.php?codigo=' + code;
   document.getElementById('qr-modal').classList.add('open');
-  document.getElementById('qr-code-text').textContent = code;
+  document.getElementById('qr-code-text').textContent = url;
   var container = document.getElementById('qr-canvas');
   container.innerHTML = '';
   _qrInstance = new QRCode(container, {
-    text: code,
+    text: url,
     width: 220,
     height: 220,
     colorDark: '#1e3a6e',

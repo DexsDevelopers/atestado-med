@@ -125,6 +125,7 @@ $shareUrl = $resultado ? $protocol . '://' . $_SERVER['HTTP_HOST']
         ['Autenticando informações…',    'Verificando registro do médico'],
         ['Quase pronto…',               'Finalizando verificação'],
       ];
+      document.body.appendChild(overlay);
       overlay.style.display = 'flex';
       var i = 0;
       var interval = setInterval(function() {

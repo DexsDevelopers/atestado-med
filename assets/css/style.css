@@ -675,9 +675,55 @@ body > main { animation:page-in .4s cubic-bezier(.22,1,.36,1) both; }
 /* ── Footer upgrade ─────────────────────────────────────────────────────── */
 .site-footer { background:linear-gradient(135deg,#0a1628,#0f2258) !important; }
 
-/* ── Typography polish ──────────────────────────────────────────────────── */
-.section-title { letter-spacing:-.025em !important; }
-h1,h2,h3 { letter-spacing:-.02em; }
+/* ── Typography — Plus Jakarta Sans for headings ────────────────────────── */
+h1, h2, h3, h4,
+.hero-h1, .hero-h2,
+.section-title, .cta-h2,
+.seal-title-ok, .seal-title-err,
+.doc-card-header,
+.feature-title, .doc-type-title,
+.step-card > div:nth-child(3),
+.nav-brand-text,
+.footer-brand {
+  font-family:'Plus Jakarta Sans', 'Inter', system-ui, sans-serif !important;
+  letter-spacing:-.025em;
+}
+.hero-h1 {
+  font-family:'Plus Jakarta Sans', 'Inter', system-ui, sans-serif !important;
+  font-weight:900 !important;
+  letter-spacing:-.04em !important;
+  line-height:1.08 !important;
+}
+.section-title {
+  font-size:2rem !important; font-weight:800 !important;
+  letter-spacing:-.03em !important;
+  color:#0a1628 !important;
+}
+.cta-h2 {
+  font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif !important;
+  font-weight:900 !important; letter-spacing:-.03em !important;
+}
+.seal-title-ok, .seal-title-err {
+  font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif !important;
+  font-weight:900 !important; letter-spacing:-.03em !important;
+}
+/* Brand accent font */
+.nav-brand-text {
+  font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif !important;
+  font-weight:800 !important; letter-spacing:-.03em !important;
+  font-size:1.2rem !important;
+}
+/* Body stays Inter but with refined sizing */
+body { font-size:15px; line-height:1.6; -webkit-font-smoothing:antialiased; }
+p { line-height:1.7; }
+.hero-sub { font-size:1.0625rem !important; line-height:1.7 !important; font-weight:400 !important; }
+/* Step card titles */
+.step-card { font-family:'Inter',system-ui,sans-serif; }
+/* Footer brand */
+.footer-brand {
+  font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif !important;
+  font-weight:800 !important; letter-spacing:-.02em !important;
+}
 
 /* ── Mobile nav upgrade ─────────────────────────────────────────────────── */
 @media(max-width:768px){

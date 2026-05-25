@@ -34,10 +34,10 @@ if ($doc['tipo_afast'] === 'dia') {
     $textoAfast = 'pelo período de ' . $doc['dias_afast'] . ' dia(s), a contar de ' . $dataAfastFmt;
 }
 
-$_sigPath = dirname(__DIR__) . '/assets/img/assinatura.png';
-$_sigSrc  = file_exists($_sigPath)
-    ? 'data:image/png;base64,' . base64_encode(file_get_contents($_sigPath))
-    : '';
+$_sigPath  = dirname(__DIR__) . '/assets/img/assinatura.png';
+$_sigSrc   = file_exists($_sigPath)  ? 'data:image/png;base64,' . base64_encode(file_get_contents($_sigPath))  : '';
+$_logoPath = dirname(__DIR__) . '/assets/img/upa-logo.png';
+$_logoSrc  = file_exists($_logoPath) ? 'data:image/png;base64,' . base64_encode(file_get_contents($_logoPath)) : '';
 ?><!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -77,16 +77,10 @@ body{background:#e8edf5;font-family:Arial,sans-serif;padding:2rem 1rem;}
   <!-- HEADER -->
   <table style="width:100%;border-bottom:2px solid #333;padding-bottom:.65rem;margin-bottom:1.1rem;" cellpadding="0" cellspacing="0">
     <tr valign="middle">
-      <td style="width:110px;padding-right:14px;">
-        <div style="border:2.5px solid #1a6e2e;border-radius:7px;overflow:hidden;width:100px;text-align:center;font-family:Arial,sans-serif;">
-          <div style="background:#1a6e2e;padding:5px 4px 2px;">
-            <span style="color:#f5c518;font-weight:900;font-size:14.5pt;letter-spacing:.5px;line-height:1;">UPA</span>
-            <span style="color:#fff;font-weight:900;font-size:10.5pt;letter-spacing:.5px;line-height:1;"> 24h</span>
-          </div>
-          <div style="background:#fff;padding:3px 2px 4px;border-top:1.5px solid #1a6e2e;">
-            <div style="font-size:5.5pt;font-weight:700;color:#1a6e2e;text-transform:uppercase;letter-spacing:.4px;line-height:1.3;">UNIDADE DE PRONTO<br>ATENDIMENTO</div>
-          </div>
-        </div>
+      <td style="width:130px;padding-right:14px;">
+        <?php if ($_logoSrc): ?>
+        <img src="<?= $_logoSrc ?>" alt="UPA 24h" style="width:120px;height:auto;display:block;">
+        <?php endif; ?>
       </td>
       <td style="text-align:center;padding:0 .5rem;">
         <div style="font-size:12.5pt;font-weight:800;text-transform:uppercase;letter-spacing:.3px;font-family:Arial,sans-serif;"><?= htmlspecialchars($doc['unidade'] ?: 'UNIDADE DE PRONTO ATENDIMENTO') ?></div>

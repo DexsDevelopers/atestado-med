@@ -201,7 +201,7 @@ $shareUrl = $resultado ? $protocol . '://' . $_SERVER['HTTP_HOST']
 
 <?php if ($searched && $resultado): ?>
 <!-- ══ RESULTADO: AUTÊNTICO ══════════════════════════════════ -->
-<section style="background:linear-gradient(180deg,#f4f7ff 0%,#fff 100%);padding:.75rem 0 3rem;">
+<section id="resultado" style="background:linear-gradient(180deg,#f4f7ff 0%,#fff 100%);padding:.75rem 0 3rem;">
 <div class="verify-result-wrap">
 
   <!-- SEAL -->
@@ -371,7 +371,7 @@ $shareUrl = $resultado ? $protocol . '://' . $_SERVER['HTTP_HOST']
 
 <?php elseif ($searched && !$dbError && !$resultado): ?>
 <!-- ══ RESULTADO: NÃO ENCONTRADO ════════════════════════════ -->
-<section style="background:#f4f7ff;padding:.75rem 0 3rem;">
+<section id="resultado" style="background:#f4f7ff;padding:.75rem 0 3rem;">
 <div class="verify-result-wrap">
   <div class="seal-wrap">
     <div class="seal-icon-err">
@@ -461,6 +461,18 @@ $__result_rendered = true;
     Verificar Documento
   </a>
 </section>
+<?php endif; ?>
+
+<?php if ($searched): ?>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var el = document.getElementById('resultado');
+  if (!el) return;
+  setTimeout(function () {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 120);
+});
+</script>
 <?php endif; ?>
 
 <!-- html5-qrcode library -->

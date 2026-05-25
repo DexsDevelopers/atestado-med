@@ -37,6 +37,27 @@ $shareUrl = $resultado ? $protocol . '://' . $_SERVER['HTTP_HOST']
     . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\') . '/verificar.php?codigo=' . urlencode($codigo) : '';
 ?>
 <?php include 'includes/header.php'; ?>
+<style>
+@media print {
+  .announce-bar, .site-nav, footer,
+  .hero-section, .section-gray,
+  .seal-wrap, .share-bar, .copy-toast,
+  .no-print, #qr-container { display: none !important; }
+
+  body { background: #fff !important; }
+  section { padding: 0 !important; background: none !important; }
+  .verify-result-wrap { padding: 0 !important; max-width: 100% !important; }
+
+  .doc-card {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+    border-radius: 0 !important;
+    page-break-inside: avoid;
+  }
+  .doc-card-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .doc-fields { grid-template-columns: 1fr 1fr !important; }
+}
+</style>
 
 <section class="hero-section" style="padding:3rem 1.5rem;">
   <div style="position:relative;z-index:1;">

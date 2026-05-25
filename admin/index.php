@@ -125,6 +125,7 @@ $_baseUrl = $_proto . '://' . $_SERVER['HTTP_HOST'] . $_root;
 <title>Admin — VerificaMed</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter',system-ui,sans-serif;background:#f4f7ff;color:#111827;min-height:100vh;}
@@ -381,7 +382,10 @@ tr:hover td{background:#fafbff;}
         <label style="font-size:.8125rem;font-weight:600;color:#1e3a6e;margin-bottom:.4rem;display:block;">
           📎 Upload do Atestado em PDF <span style="font-weight:400;color:#6b7280;">(opcional — disponibilizado na página de verificação)</span>
         </label>
-        <input type="file" name="arquivo_pdf" accept=".pdf" style="font-size:.8125rem;"/>
+        <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
+          <input type="file" name="arquivo_pdf" id="pdf-upload" accept=".pdf" style="font-size:.8125rem;"/>
+          <span id="pdf-extract-status" style="font-size:.75rem;color:#6b7280;display:none;"></span>
+        </div>
       </div>
       <button type="submit" name="novo_doc" class="btn btn-primary">
         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
@@ -523,6 +527,109 @@ function preencherQuadro(key) {
   document.getElementById('campo-cid').value    = d.c;
   document.getElementById('campo-rec').value    = d.r;
 }
+// ── PDF auto-fill ───────────────────────────────────────────────────────────
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+document.getElementById('pdf-upload').addEventListener('change', async function (e) {
+  var file = e.target.files[0];
+  if (!file || file.type !== 'application/pdf') return;
+  var status = document.getElementById('pdf-extract-status');
+  status.style.display = 'inline';
+  status.textContent = '⏳ Lendo PDF...';
+  try {
+    var ab  = await file.arrayBuffer();
+    var pdf = await pdfjsLib.getDocument({ data: ab }).promise;
+    var text = '';
+    for (var p = 1; p <= pdf.numPages; p++) {
+      var page    = await pdf.getPage(p);
+      var content = await page.getTextContent();
+      text += content.items.map(function(i){ return i.str; }).join(' ') + '\n';
+    }
+    var filled = pdfAutoFill(text);
+    if (filled > 0) {
+      status.textContent = '✅ ' + filled + ' campo(s) preenchido(s) automaticamente';
+      status.style.color = '#15803d';
+    } else {
+      status.textContent = '⚠️ Não foi possível extrair dados deste PDF';
+      status.style.color = '#b45309';
+    }
+  } catch (err) {
+    status.textContent = '❌ Erro ao ler PDF: ' + err.message;
+    status.style.color = '#dc2626';
+  }
+});
+
+function setField(name, value, isId) {
+  var el = isId ? document.getElementById(name) : document.querySelector('[name="'+name+'"]');
+  if (!el || !value) return false;
+  el.value = value;
+  el.style.background = '#fefce8';
+  el.style.borderColor = '#fbbf24';
+  setTimeout(function(){ el.style.background = ''; el.style.borderColor = ''; }, 4000);
+  return true;
+}
+
+function pdfAutoFill(text) {
+  var count = 0;
+  var t = text.replace(/\s+/g, ' ');
+
+  // Patient + treatment
+  var mPat = t.match(/atesto que o\([ao]\)\s*(Sr\.|Sra\.|Dr\.|Dra\.)\s+([A-ZÁÉÍÓÚÃÕÂÊÔÀÇÜ][^,\n]{3,50})/i);
+  if (mPat) {
+    if (setField('tratamento', mPat[1].trim())) count++;
+    if (setField('paciente',   mPat[2].trim())) count++;
+  }
+
+  // Doctor name: line before CRM
+  var mDoc = t.match(/([A-ZÁÉÍÓÚÃÕÂÊÔÀÇÜ][A-Za-záéíóúãõâêôàçü\s]{5,50})\s+(?:Médico|médico|Médica|Especialista|Clínico)/i);
+  if (!mDoc) mDoc = t.match(/Dr(?:a)?\. ([A-ZÁÉÍÓÚÃÕÂÊÔÀÇÜ][^\n,]{5,50})(?=\s+CRM|\s+Médico)/i);
+  if (mDoc) { if (setField('medico', mDoc[1].trim())) count++; }
+
+  // Specialty
+  var mEsp = t.match(/(?:Médico|Médica)\s+(Clínico Geral|Cirurgião|Ortopedista|Ginecologista|Pediatra|Cardiologista|Neurologista|Dermatologista|Urologista|Oftalmologista|Psiquiatra|Reumatologista|Oncologista|Endocrinologista|Gastroenterologista)/i);
+  if (mEsp) { if (setField('especialidade', mEsp[1])) count++; }
+
+  // CRM-XX 12345
+  var mCRM = t.match(/CRM[-\s]([A-Z]{2})[^\d]*(\d{4,6})/i);
+  if (mCRM) {
+    if (setField('crm_estado', mCRM[1].toUpperCase())) count++;
+    if (setField('crm_numero', mCRM[2])) count++;
+  }
+
+  // CNS
+  var mCNS = t.match(/CNS[:\s]+([\d ]{15,18})/i);
+  if (mCNS) { if (setField('cns', mCNS[1].replace(/\s/g,''))) count++; }
+
+  // CID
+  var mCID = t.match(/CID[:\s]+([A-Z]\d{2}(?:\.\d{1,2})?)/i);
+  if (mCID) { if (setField('campo-cid', mCID[1], true)) count++; }
+
+  // Attendance date (first dd/mm/yyyy)
+  var mDates = [...t.matchAll(/(\d{2})\/(\d{2})\/(\d{4})/g)];
+  if (mDates.length) {
+    var d = mDates[mDates.length - 1];
+    if (setField('data_atend', d[3]+'-'+d[2]+'-'+d[1])) count++;
+  }
+
+  // Days of absence
+  var mDias = t.match(/afastamento de (\d+)\s*dia/i);
+  if (mDias) { if (setField('dias_afast', mDias[1])) count++; }
+
+  // City
+  var mCid = t.match(/,?\s*([A-ZÁÉÍÓÚÃÕÂÊÔÀÇÜ][a-záéíóúãõâêôàç]+(?:\s+[A-Za-záéíóúãõâêôàç]+)*)[-\s]+(?:AC|AL|AM|AP|BA|CE|DF|ES|GO|MA|MG|MS|MT|PA|PB|PE|PI|PR|RJ|RN|RO|RR|RS|SC|SE|SP|TO)\b/);
+  if (mCid) { if (setField('cidade', mCid[1].trim())) count++; }
+
+  // Unit name (first non-empty substantial line, likely the hospital name)
+  var mUnit = t.match(/^([A-ZÁÉÍÓÚÃÕÂÊÔÀÇÜ][^\n]{10,60}UPA|[^\n]{10,60}Hospital|[^\n]{10,60}Clínica|[^\n]{10,60}Pronto)/im);
+  if (mUnit) { if (setField('unidade', mUnit[1].trim())) count++; }
+
+  // Quadro clínico
+  var mQ = t.match(/(?:apresentou|apresenta)\s+([^.]+\.)/i);
+  if (mQ) { var el=document.getElementById('campo-quadro'); if(el&&!el.value){el.value=mQ[1].trim();el.style.background='#fefce8';el.style.borderColor='#fbbf24';setTimeout(function(){el.style.background='';el.style.borderColor='';},4000);count++;} }
+
+  return count;
+}
+
 var VERIFY_BASE = '<?= htmlspecialchars($_baseUrl, ENT_QUOTES) ?>';
 var currentCode = '';
 var _qrInstance = null;

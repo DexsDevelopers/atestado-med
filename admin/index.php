@@ -69,7 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 trim($_POST['observacoes']  ?? ''),
                 $arquivo_pdf,
             ]);
-            $msg = $codigo;
+            header('Location: index.php?novo=' . urlencode($codigo));
+            exit;
         } catch (PDOException $e) {
             $error = 'Erro ao salvar: ' . $e->getMessage();
         }
@@ -96,6 +97,7 @@ if (!empty($_SESSION['admin'])) {
 }
 
 $today = date('Y-m-d');
+$msg   = $_GET['novo'] ?? '';
 $_proto   = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $_root    = rtrim(dirname(dirname($_SERVER['SCRIPT_NAME'])), '/\\');
 $_baseUrl = $_proto . '://' . $_SERVER['HTTP_HOST'] . $_root;

@@ -626,8 +626,8 @@ function pdfAutoFill(text) {
   var mDias = t.match(/afastamento de (\d+)\s*dia/i);
   if (mDias) { if (setField('dias_afast', mDias[1])) count++; }
 
-  // City
-  var mCid = t.match(/,?\s*([A-ZÁÉÍÓÚÃÕÂÊÔÀÇÜ][a-záéíóúãõâêôàç]+(?:\s+[A-Za-záéíóúãõâêôàç]+)*)[-\s]+(?:AC|AL|AM|AP|BA|CE|DF|ES|GO|MA|MG|MS|MT|PA|PB|PE|PI|PR|RJ|RN|RO|RR|RS|SC|SE|SP|TO)\b/);
+  // City: must be "CityName - STATE, dd" or "CityName-STATE dd" (state followed by date)
+  var mCid = t.match(/([A-ZÁÉÍÓÚÃÕÂÊÔÀÇÜ][a-záéíóúãõâêôàç]+(?:\s+[A-Za-záéíóúãõâêôàç]+){0,3})\s*[-,]\s*(?:AC|AL|AM|AP|BA|CE|DF|ES|GO|MA|MG|MS|MT|PA|PB|PE|PI|PR|RJ|RN|RO|RR|RS|SC|SE|SP|TO)\b[\s,]*\d{2}/);
   if (mCid) { if (setField('cidade', mCid[1].trim())) count++; }
 
   // Unit name (first non-empty substantial line, likely the hospital name)

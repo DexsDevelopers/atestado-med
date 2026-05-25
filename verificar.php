@@ -72,14 +72,16 @@ $shareUrl = $resultado ? $protocol . '://' . $_SERVER['HTTP_HOST']
 }
 </style>
 
-<section class="hero-section" style="padding:3rem 1.5rem;">
+<section class="hero-section" style="padding:<?= $searched ? '1.5rem' : '3rem' ?> 1.5rem;">
   <div style="position:relative;z-index:1;">
-    <h1 class="hero-h1" style="font-size:2rem;">Verificar Documento</h1>
+    <h1 class="hero-h1" style="font-size:<?= $searched ? '1.5rem' : '2rem' ?>;">Verificar Documento</h1>
+    <?php if (!$searched): ?>
     <p class="hero-sub">Insira o código do documento ou escaneie o QR Code para confirmar a autenticidade em tempo real.</p>
+    <?php endif; ?>
   </div>
 </section>
 
-<section class="section-gray" style="padding:3rem 0;">
+<section class="section-gray" style="padding:<?= $searched ? '1.5rem' : '3rem' ?> 0 <?= $searched ? '.75rem' : '3rem' ?>;">
 <div style="max-width:640px;margin:0 auto;padding:0 1.5rem;">
 
   <div class="verify-card" style="margin-bottom:1.5rem;">
@@ -159,7 +161,7 @@ $shareUrl = $resultado ? $protocol . '://' . $_SERVER['HTTP_HOST']
 
 <?php if ($searched && $resultado): ?>
 <!-- ══ RESULTADO: AUTÊNTICO ══════════════════════════════════ -->
-<section style="background:linear-gradient(180deg,#f4f7ff 0%,#fff 100%);padding:2rem 0 4rem;">
+<section style="background:linear-gradient(180deg,#f4f7ff 0%,#fff 100%);padding:.75rem 0 3rem;">
 <div class="verify-result-wrap">
 
   <!-- SEAL -->
@@ -329,7 +331,7 @@ $shareUrl = $resultado ? $protocol . '://' . $_SERVER['HTTP_HOST']
 
 <?php elseif ($searched && !$dbError && !$resultado): ?>
 <!-- ══ RESULTADO: NÃO ENCONTRADO ════════════════════════════ -->
-<section style="background:#f4f7ff;padding:2rem 0 4rem;">
+<section style="background:#f4f7ff;padding:.75rem 0 3rem;">
 <div class="verify-result-wrap">
   <div class="seal-wrap">
     <div class="seal-icon-err">

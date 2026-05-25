@@ -25,6 +25,9 @@
   <div class="footer-bottom">&copy; <?= date('Y') ?> VerificaMed &mdash; Sistema Nacional de Verificação de Documentos Médicos</div>
 </footer>
 
-<script src="assets/js/app.js"></script>
+<script><?php
+$jsPath = dirname(__DIR__) . '/assets/js/app.js';
+if (file_exists($jsPath)) { readfile($jsPath); }
+?></script>
 </body>
 </html>
